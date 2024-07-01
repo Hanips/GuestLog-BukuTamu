@@ -21,7 +21,7 @@
                         </div>
                         <div>
                             <a href="{{ route('officer.create') }}" class="btn btn-primary mr-2">{{ __('+ Tambah Data') }}</a>
-                            <a href="{{-- route('guest.excel') --}}" class="btn btn-success"><i class="fas fa-file mx-1"></i> Export Petugas</a>
+                            <a href="{{ route('officer.excel') }}" class="btn btn-success"><i class="fas fa-file mx-1"></i> Export Petugas</a>
                         </div>
                     </div>
                     <div class="row">

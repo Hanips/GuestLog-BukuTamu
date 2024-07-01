@@ -67,6 +67,10 @@
                                                 <label for="user_id" class="form-label">Petugas Penerima</label>
                                                 <input class="form-control" value="{{ $rs->user->name }}" id="user_id" type="text" placeholder="Nama User" disabled />
                                             </div>
+                                            <div class="mb-3">
+                                                <label for="user_id" class="form-label">TTD Tamu</label>
+                                                <img src="{{ Storage::url($rs->signature) }}" alt="Signature">
+                                            </div>
                                             <div class="form-group mb-3">
                                                 <label for="status" class="form-label">Status</label>
                                                 <br>

@@ -22,6 +22,7 @@ class Guest extends Model
         'alamat',
         'keperluan',
         'tgl_kunjungan',
+        'signature',
         'waktu_masuk',
         'waktu_keluar',
         'status',

@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Guest;
 use App\Models\Year;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\DB; //query builder
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use App\Exports\GuestsExport;
 use App\Models\User;
 use Maatwebsite\Excel\Facades\Excel;
@@ -47,6 +47,7 @@ class GuestController extends Controller
      */
     public function store(Request $request)
     {
+        dd($request->all());
         //proses input tamu dari form
         $request->validate([
             'nama' => 'required|max:45',
@@ -55,6 +56,7 @@ class GuestController extends Controller
             'email' => 'required|max:45',
             'alamat' => 'required|max:45',
             'keperluan' => 'required|max:100',
+            'signature' => 'required',
             'tgl_kunjungan' => 'required',
             'waktu_masuk' => 'required',
             'waktu_keluar' => 'required',
@@ -75,6 +77,7 @@ class GuestController extends Controller
             'alamat.max'=>'Alamat Maksimal 45 karakter',
             'keperluan.required'=>'Keperluan Wajib Diisi',
             'keperluan.max'=>'Keperluan Maksimal 100 karakter',
+            'signature.required'=>'TTD Wajib Diisi',
             'tgl_kunjungan' => 'Tanggal Wajib Diisi',
             'waktu_masuk' => 'Waktu Masuk Wajib Diisi',
             'waktu_keluar' => 'Waktu Keluar Wajib Diisi',
@@ -87,6 +90,13 @@ class GuestController extends Controller
 
         //lakukan insert data dari request form
         try{
+            // Save the signature image
+            $signatureData = $request->input('signature');
+            $signature = str_replace('data:image/png;base64,', '', $signatureData);
+            $signature = str_replace(' ', '+', $signature);
+            $signatureName = 'Str::random(10)' . '.png';
+            Storage::disk('public')->put('signatures/' . $signatureName, base64_decode($signature));
+
             Guest::create(
             [
                 'nama'=>$request->nama,
@@ -95,6 +105,7 @@ class GuestController extends Controller
                 'email'=>$request->email,
                 'alamat'=>$request->alamat,
                 'keperluan'=>$request->keperluan,
+                'signature' => 'signatures/' . $signatureName,
                 'tgl_kunjungan'=>$request->tgl_kunjungan,
                 'waktu_masuk'=>$request->waktu_masuk,
                 'waktu_keluar'=>$request->waktu_keluar,

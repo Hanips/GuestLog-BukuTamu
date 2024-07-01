@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Support\Facades\DB; //query builder
+use App\Exports\OfficerExport;
+use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class OfficerController extends Controller
 {
@@ -146,8 +148,8 @@ class OfficerController extends Controller
                         ->with('success','Data Petugas Berhasil Dihapus');
     }
 
-    // public function officerExcel()
-    // {
-    //     return Excel::download(new PetugasExport, 'officer_'.date('d-m-Y').'.xlsx');
-    // }
+    public function officerExcel()
+    {
+        return Excel::download(new OfficerExport, 'officer_'.date('d-m-Y').'.xlsx');
+    }
 }

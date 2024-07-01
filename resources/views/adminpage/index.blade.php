@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
-  <title> @yield('title_page') | SIBPRO</title>
+  <title> @yield('title_page') | SIBPro</title>
   <link
   href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAAAAAAADdZgUA/vz7AO+6kADcZAAA////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMzMzMzMzMzMzMzMzMzMzMzMzMzREQ0QzMzMzRERERDMzMzREMzREMzMzNEMzNEQzMzM0QzMzRDMzMzREMzREMzMzNERAREQzMzMzRERERDMzMzM0RBJEMzMzMzMzMkQzMzMzMzMyRDMzMzMzMzJEMzMzMzMzMzMzMzMzMzMzMzMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
   rel="icon" type="image/x-icon">
@@ -77,6 +77,7 @@
   <script src="{{ asset('adminpage/modules/summernote/summernote-bs4.js') }}"></script>
   <script src="{{ asset('adminpage/modules/chocolat/dist/js/jquery.chocolat.min.js') }}"></script>
   <script src="{{ asset('adminpage/modules/notiflix/src/notiflix.js') }}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
 
   <!-- Page Specific JS File -->
   <script src="{{ asset('adminpage/js/page/index.js') }}"></script>

@@ -19,6 +19,10 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('admin/guest', GuestController::class);
     Route::get('/guest-excel', [GuestController::class, 'guestExcel'])->name('guest.excel');
     
+    // Officer routes
+    Route::resource('admin/officer', OfficerController::class);
+    Route::get('/officer-excel', [OfficerController::class, 'officerExcel'])->name('officer.excel');
+
     // Year routes
     Route::post('/current-year', [YearController::class, 'currentYear'])->name('current-year');
     Route::get('/admin/setting/year', [YearController::class, 'index'])->name('year');
@@ -26,6 +30,4 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/admin/setting/year/add', [YearController::class, 'store'])->name('storeYear');
     Route::post('/admin/setting/year/update/{id}', [YearController::class, 'update'])->name('updateYear');
     
-    // Officer routes
-    Route::resource('admin/officer', OfficerController::class);
 });

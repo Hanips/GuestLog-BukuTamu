@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
-  <title>403 &mdash; Stisla</title>
+  <title>Access Denied | SIBPro</title>
 
   <!-- General CSS Files -->
   <link rel="stylesheet" href="{{ asset('adminpage/modules/bootstrap/css/bootstrap.min.css') }}">
@@ -51,7 +51,7 @@
           </div>
         </div>
         <div class="simple-footer mt-5">
-          Copyright &copy; Stisla 2018
+          SMK BP Darul Ulum Rejosari, Grobogan
         </div>
       </div>
     </section>
