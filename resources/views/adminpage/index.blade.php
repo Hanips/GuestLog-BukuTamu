@@ -38,7 +38,7 @@
   <div id="app">
     <div class="main-wrapper main-wrapper-1">
 
-      @if (Auth::user()->role != 'Pengguna')
+      @if (Auth::user()->role != 'Pengguna' && !(Auth::user()->role == 'Satpam' && (Request::is('admin/officer/create') || Request::is('admin/officer/*/edit'))))
         <!-- ======= Header ======= -->
         @include('adminpage.header')
 
@@ -77,7 +77,6 @@
   <script src="{{ asset('adminpage/modules/summernote/summernote-bs4.js') }}"></script>
   <script src="{{ asset('adminpage/modules/chocolat/dist/js/jquery.chocolat.min.js') }}"></script>
   <script src="{{ asset('adminpage/modules/notiflix/src/notiflix.js') }}"></script>
-  <script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
 
   <!-- Page Specific JS File -->
   <script src="{{ asset('adminpage/js/page/index.js') }}"></script>

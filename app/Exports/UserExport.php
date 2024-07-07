@@ -6,7 +6,7 @@ use App\Models\User;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class OfficerExport implements FromCollection, WithHeadings
+class UserExport implements FromCollection, WithHeadings
 {
     /**
     * @return \Illuminate\Support\Collection
@@ -14,21 +14,21 @@ class OfficerExport implements FromCollection, WithHeadings
     public function collection()
     {
         // Contoh filter: hanya mengambil user dengan role 'Staff'
-        $officers = User::where('role', '=', 'Satpam')->get();
+        $users = User::all();
 
         // Menambahkan nomor urut
-        $officers->each(function($officer, $key) {
-            $officer->no = $key + 1;
+        $users->each(function($user, $key) {
+            $user->no = $key + 1;
         });
 
         // Memilih kolom yang ingin diekspor
-        return $officers->map(function($officer) {
+        return $users->map(function($user) {
             return [
-                'No' => $officer->no,
-                'Nama' => $officer->name,
-                'Email' => $officer->email,
-                'Role' => $officer->role,
-                'Created At' => $officer->created_at->format('Y-m-d H:i:s')
+                'No' => $user->no,
+                'Nama' => $user->name,
+                'Email' => $user->email,
+                'Role' => $user->role,
+                'Created At' => $user->created_at->format('Y-m-d H:i:s')
             ];
         });
     }

@@ -1,31 +1,31 @@
 @if (Auth::user()->role != 'Pengguna' && Auth::user()->role != 'Satpam')
     @extends('adminpage.index')
 
-    @section('title_page', 'Edit Petugas')
+    @section('title_page', 'Edit Pengguna')
 
     @section('content')
         <div class="main-content">
             <section class="section">
                 <div class="section-header">
-                    <h1>Edit Petugas</h1>
+                    <h1>Edit Pengguna</h1>
                     <div class="section-header-breadcrumb">
                         <div class="breadcrumb-item active"><a href="{{ url('/admin') }}">Dashboard</a></div>
-                        <div class="breadcrumb-item active"><a href="{{ url('/admin/officer') }}">Data Petugas</a></div>
-                        <div class="breadcrumb-item">Edit Petugas</div>
+                        <div class="breadcrumb-item active"><a href="{{ url('/admin/account/user') }}">Data Pengguna</a></div>
+                        <div class="breadcrumb-item">Edit Pengguna</div>
                     </div>
                 </div>
 
                 <div class="section-body">
-                    <h2 class="section-title">Edit Petugas</h2>
-                    <p class="section-lead">Silakan ubah formulir petugas di bawah ini.</p>
+                    <h2 class="section-title">Edit Pengguna</h2>
+                    <p class="section-lead">Silakan ubah formulir pengguna di bawah ini.</p>
 
                     <div class="row">
                         <div class="col-md-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <h4>Form Edit Petugas</h4>
+                                    <h4>Form Edit Pengguna</h4>
                                 </div>
-                                <form method="POST" action="{{ route('officer.update', $row->id) }}" id="contactForm" enctype="multipart/form-data">
+                                <form method="POST" action="{{ route('user.update', $row->id) }}" id="contactForm" enctype="multipart/form-data">
                                     @csrf
                                     @method('PUT')
                                     <div class="card-body">
@@ -49,7 +49,7 @@
                                                         </div>
                                                     @enderror
                                                 </div>
-                                                {{-- <div class="form-group">
+                                                <div class="form-group">
                                                     <label for="role" class="form-label">Role</label>
                                                     <select class="form-control select2" name="role">
                                                         <option value="">-- Pilih Role --</option>
@@ -62,14 +62,13 @@
                                                             {{ $message }}
                                                         </div>
                                                     @enderror
-                                                </div> --}}
-                                                <input type="hidden" name="role" value="Satpam">  
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="card-footer text-right">
                                         <button class="btn btn-primary" type="submit">Simpan</button>
-                                        <a href="{{ url('/admin/officer') }}" class="btn btn-danger">Batal</a>
+                                        <a href="{{ url('/admin/account/user') }}" class="btn btn-danger">Batal</a>
                                     </div>
                                 </form>
                             </div>

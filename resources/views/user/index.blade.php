@@ -1,38 +1,36 @@
 @extends('adminpage.index')
 
-@section('title_page', 'Data Petugas')
+@section('title_page', 'Manajemen Pengguna')
 
 @section('content')
-@if (Auth::user()->role != 'Pengguna')
+@if (Auth::user()->role != 'Pengguna' && Auth::user()->role != 'Satpam')
     <div class="main-content">
         <section class="section">
             <div class="section-header">
-                <h1>Data Petugas</h1>
+                <h1>Manajemen Pengguna</h1>
                 <div class="section-header-breadcrumb">
                     <div class="breadcrumb-item active"><a href="{{ url('/admin') }}">Dashboard</a></div>
-                    <div class="breadcrumb-item">Data Petugas</div>
+                    <div class="breadcrumb-item">Manajemen Pengguna</div>
                 </div>
             </div>
             <div class="section-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <div>
-                        <h2 class="section-title">Data Petugas</h2>
-                        <p class="section-lead">Buat dan ubah data petugas</p>
+                        <h2 class="section-title">Manajemen Pengguna</h2>
+                        <p class="section-lead">Buat dan ubah data pengguna</p>
                     </div>
-                    @if (Auth::user()->role != 'Satpam')
-                        <div>
-                            <a href="{{ route('officer.create') }}" class="btn btn-primary mr-2">{{ __('+ Tambah Data') }}</a>
-                            <a href="{{ route('officer.excel') }}" class="btn btn-success"><i class="fas fa-file mx-1"></i> Export Petugas</a>
-                        </div>
-                    @endif
+                    <div>
+                        <a href="{{ route('user.create') }}" class="btn btn-primary mr-2">{{ __('+ Tambah Data') }}</a>
+                        <a href="{{ route('user.excel') }}" class="btn btn-success"><i class="fas fa-file mx-1"></i> Export Pengguna</a>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4>Tabel Petugas</h4>
+                                <h4>Tabel Pengguna</h4>
                                 <div class="card-header-form">
-                                    <form action="{{ route('officer.index') }}" method="GET">
+                                    <form action="{{ route('user.index') }}" method="GET">
                                         <div class="input-group">
                                             <input type="text" name="search" class="form-control" placeholder="Search" value="{{ request('search') }}">
                                             <div class="input-group-btn">
@@ -52,45 +50,44 @@
                                             <th>Role</th>
                                             <th>Action</th>
                                         </tr>
-                                        @if ($ar_officer->isEmpty())
+                                        @if ($ar_user->isEmpty())
                                             <tr>
-                                                <td colspan="5" class="text-center">Belum ada data satpam</td>
+                                                <td colspan="5" class="text-center">Belum ada data pengguna</td>
                                             </tr>
                                         @else
                                             @php
                                                 $no = 1;
                                             @endphp
-                                            @foreach($ar_officer as $officer)
+                                            @foreach($ar_user as $user)
                                                 <tr>
                                                     <td class="p-0 text-center">{{ $no }}</td>
-                                                    <td>{{ $officer->name }}</td>
-                                                    <td>{{ $officer->email }}</td>
-                                                    <td><div class="badge badge-info">{{ $officer->role }}</div></td>
-                                                    {{-- <td>
-                                                        @if ($officer->role != 'Pengguna')
-                                                            <div class="badge badge-success">{{ $officer->role }}</div>
-                                                        @else
-                                                            <div class="badge badge-danger">Pengguna</div>
+                                                    <td>{{ $user->name }}</td>
+                                                    <td>{{ $user->email }}</td>
+                                                    <td>
+                                                        @if ($user->role == 'Administrator' || $user->role == 'Staff')
+                                                            <div class="badge badge-success">{{ $user->role }}</div>
+                                                        @elseif ($user->role == 'Satpam')
+                                                            <div class="badge badge-info">{{ $user->role }}</div>
+                                                        @elseif ($user->role == 'Pengguna')
+                                                            <div class="badge badge-danger">{{ $user->role }}</div>
                                                         @endif
-                                                    </td> --}}
+                                                    </td>
                                                     <td>
                                                         <div class="d-flex justify-content-start">
                                                             <div class="text-warning mx-2 cursor-pointer">
-                                                                <a class="btn btn-info btn-sm me-1" href="{{ route('officer.show', $officer->id) }}" title="Detail">
+                                                                <a class="btn btn-info btn-sm me-1" href="{{ route('user.show', $user->id) }}" title="Detail">
                                                                     <i class="fa fa-eye"></i>
                                                                 </a>
                                                             </div>
                                                             <div class="text-danger mx-2 cursor-pointer">
-                                                                @if (Auth::user()->role != 'Satpam')
-                                                                    <form method="POST" action="{{ route('officer.destroy', $officer->id) }}" style="display: inline;">
-                                                                        @csrf
-                                                                        @method('DELETE')
-                                                                        <button class="btn btn-danger btn-sm" type="submit" title="Hapus" name="proses" value="hapus" onclick="return confirm('Anda Yakin Data Dihapus?')">
-                                                                            <i class="fa fa-trash"></i>
-                                                                        </button>
-                                                                        <input type="hidden" name="idx" value=""/>
-                                                                    </form>
-                                                                @endif
+                                                                <form method="POST" action="{{ route('user.destroy', $user->id) }}" style="display: inline;">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                    <button class="btn btn-danger btn-sm" type="submit" title="Hapus" name="proses" value="hapus" onclick="return confirm('Anda Yakin data Dihapus?')">
+                                                                        <i class="fa fa-trash"></i>
+                                                                    </button>
+                                                                    <input type="hidden" name="idx" value=""/>
+                                                                </form>
                                                             </div>
                                                         </div>
                                                     </td>

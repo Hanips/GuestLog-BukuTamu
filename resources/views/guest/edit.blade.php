@@ -1,4 +1,4 @@
-@if (Auth::user()->role != 'Pengguna')
+@if (Auth::user()->role != 'Pengguna' && Auth::user()->role != 'Satpam')
     @extends('adminpage.index')
 
     @section('title_page', 'Edit Tamu')

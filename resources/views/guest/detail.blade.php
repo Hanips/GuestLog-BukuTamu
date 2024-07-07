@@ -84,13 +84,15 @@
                                     </div>
                                     <div class="card-footer text-right">
                                         <a href="{{ url('/admin/guest') }}" class="btn btn-primary">Kembali</a>
-                                        <a class="btn btn-warning" href="{{ route('guest.edit', $rs->id) }}" title="Ubah">Ubah</a>
-                                        <form method="POST" action="{{ route('guest.destroy', $rs->id) }}" style="display: inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button class="btn btn-danger" type="submit" title="Hapus" name="proses" value="hapus" onclick="return confirm('Anda Yakin Data Dihapus?')">Hapus</button>
-                                            <input type="hidden" name="idx" value=""/>
-                                        </form>
+                                        @if (Auth::user()->role != 'Satpam')
+                                            <a class="btn btn-warning" href="{{ route('guest.edit', $rs->id) }}" title="Ubah">Ubah</a>
+                                            <form method="POST" action="{{ route('guest.destroy', $rs->id) }}" style="display: inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button class="btn btn-danger" type="submit" title="Hapus" name="proses" value="hapus" onclick="return confirm('Anda Yakin Data Dihapus?')">Hapus</button>
+                                                <input type="hidden" name="idx" value=""/>
+                                            </form>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

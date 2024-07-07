@@ -20,7 +20,7 @@ class YearController extends Controller
     {
         $notifications = Notification::orderByRaw("CASE WHEN notification_status = 0 THEN 0 ELSE 1 END, updated_at DESC")->limit(10)->get();
         $years = Year::orderByRaw('year_status = "active" desc, updated_at desc')->select('year_name','year_status','id')->get();
-        return view('year.year', compact('years'));
+        return view('year.index', compact('years'));
     }
 
     public function store(Request $request)
@@ -93,13 +93,18 @@ class YearController extends Controller
         if (!$year) {
             return response()->json(['message' => 'Data Tahun tidak ditemukan.'], 404);
         }
-        $year->delete();
-        Notification::create([
-            'notification_content' => Auth::user()->name . " " . "menghapus data tahun ajaran" . " " . $year->year_name,
-            'notification_status' => 0
-        ]);
 
-        return response()->json(['message' => 'Data Tahun berhasil dihapus.']);
+        try {
+            $year->delete();
+            Notification::create([
+                'notification_content' => Auth::user()->name . " " . "menghapus data tahun ajaran" . " " . $year->year_name,
+                'notification_status' => 0
+            ]);
+
+            return response()->json(['message' => 'Data Tahun berhasil dihapus.']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Gagal menghapus data tahun ajaran.'], 500);
+        }
     }
 
 
