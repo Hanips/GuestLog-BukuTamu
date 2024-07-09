@@ -48,12 +48,7 @@
                                     <a href="{{ url('/admin/officer') }}" class="btn btn-primary">Kembali</a>
                                     @if (Auth::user()->role != 'Satpam')
                                         <a class="btn btn-warning" href="{{ route('officer.edit', $rs->id) }}" title="Ubah">Ubah</a>
-                                        <form method="POST" action="{{ route('officer.destroy', $rs->id) }}" style="display: inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button class="btn btn-danger" type="submit" title="Hapus" name="proses" value="hapus" onclick="return confirm('Anda Yakin Data Dihapus?')">Hapus</button>
-                                            <input type="hidden" name="idx" value=""/>
-                                        </form>
+                                        <button class="btn btn-danger delete-button" data-user-id="{{ $rs->id }}" title="Hapus">Hapus</button>
                                     @endif
                                 </div>
                             </div>
@@ -62,6 +57,47 @@
                 </div>
             </section>
         </div>
+
+        @push('scripts')
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const deleteButtons = document.querySelectorAll('.delete-button');
+                    deleteButtons.forEach(button => {
+                        button.addEventListener('click', function() {
+                            const userId = button.getAttribute('data-user-id');
+
+                            Notiflix.Confirm.show('Konfirmasi', 'Apakah Anda yakin ingin menghapus petugas ini?', 'Ya', 'Batal',
+                                function() {
+                                    fetch(`/admin/officer/${userId}`, {
+                                            method: 'DELETE',
+                                            headers: {
+                                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                            }
+                                        })
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            if (data.success) {
+                                                Notiflix.Notify.success('Petugas berhasil dihapus!', {
+                                                    timeout: 3000
+                                                });
+                                                location.href = '{{ route('officer.index') }}';
+                                            } else {
+                                                Notiflix.Notify.failure(data.message, {
+                                                    timeout: 3000
+                                                });
+                                            }
+                                        })
+                                        .catch(error => {
+                                            Notiflix.Notify.failure('Terjadi kesalahan saat menghapus petugas.', {
+                                                timeout: 3000
+                                            });
+                                        });
+                                });
+                        });
+                    });
+                });
+            </script>
+        @endpush
     @endsection
 @else
     @include('adminpage.access_denied')

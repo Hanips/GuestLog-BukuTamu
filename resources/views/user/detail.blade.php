@@ -1,4 +1,4 @@
-@if (Auth::user()->role != 'Pengguna')
+@if (Auth::user()->role != 'Pengguna' && Auth::user()->role != 'Satpam')
     @extends('adminpage.index')
 
     @section('title_page', 'Detail Pengguna')
@@ -48,12 +48,7 @@
                                     <a href="{{ url('/admin/account/user') }}" class="btn btn-primary">Kembali</a>
                                     @if (Auth::user()->role != 'Satpam')
                                         <a class="btn btn-warning" href="{{ route('user.edit', $rs->id) }}" title="Ubah">Ubah</a>
-                                        <form method="POST" action="{{ route('user.destroy', $rs->id) }}" style="display: inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button class="btn btn-danger" type="submit" title="Hapus" name="proses" value="hapus" onclick="return confirm('Anda Yakin Data Dihapus?')">Hapus</button>
-                                            <input type="hidden" name="idx" value=""/>
-                                        </form>
+                                        <button class="btn btn-danger delete-button" data-user-id="{{ $rs->id }}" title="Hapus">Hapus</button>
                                     @endif
                                 </div>
                             </div>
@@ -62,6 +57,47 @@
                 </div>
             </section>
         </div>
+
+        @push('scripts')
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const deleteButtons = document.querySelectorAll('.delete-button');
+                    deleteButtons.forEach(button => {
+                        button.addEventListener('click', function() {
+                            const userId = button.getAttribute('data-user-id');
+
+                            Notiflix.Confirm.show('Konfirmasi', 'Apakah Anda yakin ingin menghapus pengguna ini?', 'Ya', 'Batal',
+                                function() {
+                                    fetch(`/admin/account/user/${userId}`, {
+                                            method: 'DELETE',
+                                            headers: {
+                                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                            }
+                                        })
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            if (data.success) {
+                                                Notiflix.Notify.success('Pengguna berhasil dihapus!', {
+                                                    timeout: 3000
+                                                });
+                                                location.href = '{{ route('user.index') }}';
+                                            } else {
+                                                Notiflix.Notify.failure(data.message, {
+                                                    timeout: 3000
+                                                });
+                                            }
+                                        })
+                                        .catch(error => {
+                                            Notiflix.Notify.failure('Terjadi kesalahan saat menghapus pengguna.', {
+                                                timeout: 3000
+                                            });
+                                        });
+                                });
+                        });
+                    });
+                });
+            </script>
+        @endpush
     @endsection
 @else
     @include('adminpage.access_denied')

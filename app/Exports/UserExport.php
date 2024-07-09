@@ -13,15 +13,12 @@ class UserExport implements FromCollection, WithHeadings
     */
     public function collection()
     {
-        // Contoh filter: hanya mengambil user dengan role 'Staff'
         $users = User::all();
 
-        // Menambahkan nomor urut
         $users->each(function($user, $key) {
             $user->no = $key + 1;
         });
 
-        // Memilih kolom yang ingin diekspor
         return $users->map(function($user) {
             return [
                 'No' => $user->no,

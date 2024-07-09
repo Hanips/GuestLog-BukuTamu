@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Exports\OfficerExport;
+use App\Models\Notification;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 
 class OfficerController extends Controller
@@ -17,13 +20,13 @@ class OfficerController extends Controller
     {
         $search = $request->input('search');
 
-        // Mulai query dengan mengambil seluruh data users dengan peran Satpam dan mengurutkan berdasarkan id
+        $notifications = Notification::orderByRaw("CASE WHEN notification_status = 0 THEN 0 ELSE 1 END, updated_at DESC")->limit(10)->get();
+
         $query = DB::table('users')
                     ->select('users.*')
                     ->where('role', 'Satpam')
                     ->orderBy('users.id', 'desc');
 
-        // Jika ada input pencarian, tambahkan klausa where
         if ($search) {
             $query->where(function($query) use ($search) {
                 $query->where('name', 'LIKE', "%{$search}%")
@@ -31,10 +34,9 @@ class OfficerController extends Controller
             });
         }
 
-        // Dapatkan hasil query
-        $ar_officer = $query->get();
+        $ar_officer = $query->paginate(10);
 
-        return view('officer.index', compact('ar_officer'));
+        return view('officer.index', compact('notifications', 'ar_officer'));
     }
 
     /**
@@ -42,9 +44,10 @@ class OfficerController extends Controller
      */
     public function create()
     {
-        $roles = User::ROLES; // Ambil data role dari model User
+        $roles = User::ROLES;
+        $notifications = Notification::orderByRaw("CASE WHEN notification_status = 0 THEN 0 ELSE 1 END, updated_at DESC")->limit(10)->get();
 
-        return view('officer.create', compact('roles'));
+        return view('officer.create', compact('roles', 'notifications'));
     }
 
     /**
@@ -52,14 +55,12 @@ class OfficerController extends Controller
      */
     public function store(Request $request)
     {
-        //proses input tamu dari form
         $request->validate([
             'name' => 'required|max:45',
             'email' => 'required|max:45',
             'password' => 'required|max:20',
             'role' => 'required',
         ],
-        //custom pesan errornya
         [
             'name.required'=>'Nama Wajib Diisi',
             'name.max'=>'Nama Maksimal 45 karakter',
@@ -71,23 +72,30 @@ class OfficerController extends Controller
         ]
         );
 
-        //lakukan insert data dari request form
         try{
-            User::create(
+            $officer = User::create(
             [
                 'name'=>$request->name,
                 'email'=>$request->email,
                 'password'=>$request->password,
                 'role'=>$request->role,
             ]);
+
+        Notification::create([
+            'notification_content' => Auth::user()->name . " " . "membuat data petugas dengan nama" . " " . $request->nama,
+            'notification_status' => 0
+        ]);
        
-        return redirect()->route('officer.index')
-                        ->with('success','Data Petugas Baru Berhasil Disimpan');
-        }
-        catch (\Exception $e){
-            //return redirect()->back()
-            return redirect()->route('officer.index')
-                ->with('error', 'Terjadi Kesalahan Saat Input Data!');
+        Log::info('Data successfully created', ['user' => $officer]);
+
+            return response()->json([
+                'message' => 'Data petugas berhasil ditambahkan!',
+                'data' => $officer,
+            ], 201);
+        
+        } catch (\Exception $e) {
+            Log::error('Failed to save data', ['exception' => $e->getMessage()]);
+            return response()->json(['error' => 'Gagal menyimpan data: ' . $e->getMessage()], 500);
         }
     }
 
@@ -97,7 +105,9 @@ class OfficerController extends Controller
     public function show(string $id)
     {
         $rs = User::findOrFail($id);
-        return view('officer.detail', compact('rs'));
+        $notifications = Notification::orderByRaw("CASE WHEN notification_status = 0 THEN 0 ELSE 1 END, updated_at DESC")->limit(10)->get();
+
+        return view('officer.detail', compact('rs', 'notifications'));
     }
 
     /**
@@ -106,9 +116,10 @@ class OfficerController extends Controller
     public function edit(string $id)
     {
         $roles = User::ROLES;
-        //tampilkan data lama di form
         $row = User::find($id);
-        return view('officer.edit',compact('row', 'roles'));
+        $notifications = Notification::orderByRaw("CASE WHEN notification_status = 0 THEN 0 ELSE 1 END, updated_at DESC")->limit(10)->get();
+
+        return view('officer.edit',compact('row', 'roles', 'notifications'));
     }
 
     /**
@@ -116,13 +127,11 @@ class OfficerController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //proses input tamu dari form
         $request->validate([
             'name' => 'required|max:45',
             'email' => 'required|max:45',
             'role' => 'required',
         ],
-        //custom pesan errornya
         [
             'name.required'=>'Nama Wajib Diisi',
             'name.max'=>'Nama Maksimal 45 karakter',
@@ -133,22 +142,29 @@ class OfficerController extends Controller
         );
 
         try {
-            // Ambil data tamu berdasarkan ID
             $officer = User::findOrFail($id);
 
-            // Update atribut-atribut data tamu
             $officer->name = $request->name;
             $officer->email = $request->email;
             $officer->role = $request->role;
 
-            // Simpan perubahan ke dalam database
             $officer->save();
 
-            return redirect()->route('officer.index')
-                            ->with('success', 'Data Petugas Berhasil Diubah');
+            Notification::create([
+                'notification_content' => Auth::user()->name . " " . "mengedit data satpam dengan nama" . " " . $officer->nama,
+                'notification_status' => 0
+            ]);
+
+            Log::info('Data successfully created', ['user' => $officer]);
+
+            return response()->json([
+                'message' => 'Data petugas berhasil diubah!',
+                'data' => $officer,
+            ], 201);
+        
         } catch (\Exception $e) {
-            return redirect()->route('officer.index')
-                            ->with('error', 'Terjadi Kesalahan Saat Memperbarui Data Petugas');
+            Log::error('Failed to save data', ['exception' => $e->getMessage()]);
+            return response()->json(['error' => 'Gagal menyimpan data: ' . $e->getMessage()], 500);
         }
     }
 
@@ -157,10 +173,19 @@ class OfficerController extends Controller
      */
     public function destroy(string $id)
     {
-        $officer = User::find($id);
-        $officer->delete();
-        return redirect()->route('officer.index')
-                        ->with('success','Data Petugas Berhasil Dihapus');
+        try {
+            $officer = User::findOrFail($id);
+            $officer->delete();
+    
+            Notification::create([
+                'notification_content' => Auth::user()->name . " " . "menghapus data petugas dengan nama" . " " . $officer->name,
+                'notification_status' => 0
+            ]);
+    
+            return response()->json(['success' => true, 'message' => 'Petugas berhasil dihapus.']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Gagal menghapus petugas.'], 500);
+        }
     }
 
     public function officerExcel()

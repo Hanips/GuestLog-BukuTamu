@@ -16,16 +16,19 @@ class Guest extends Model
         'user_id',
         'year_id',
         'nama',
+        'NIP',
+        'jabatan',
         'instansi',
         'no_telp',
         'email',
         'alamat',
-        'keperluan',
         'tgl_kunjungan',
-        'signature',
         'waktu_masuk',
         'waktu_keluar',
         'status',
+        'signature',
+        'keperluan',
+        'saran',
     ];
 
     public function user(): BelongsTo

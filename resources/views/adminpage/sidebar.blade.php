@@ -30,36 +30,28 @@
       @if (Auth::user()->role != 'Satpam')
         <li class="menu-header">Utilitas</li>
         <li class="dropdown {{ Request::is('admin/account*') ? 'active' : '' }}">
-          <a href="#" class="nav-link has-dropdown"><i class="fas fa-user-lock"></i>
-            <span>Pengaturan Akun</span></a>
+          <a href="#" class="nav-link has-dropdown">
+            <i class="fas fa-user-lock"></i>
+            <span>Pengaturan Akun</span>
+          </a>
           <ul class="dropdown-menu">
-            <li class="{{ Request::segment(3) === 'user' ? 'active' : '' }}"><a
-              href="{{ url('/admin/account/user') }}">Manajemen Pengguna</a></li>
-          </ul>
-          <ul class="dropdown-menu">
-            <li class="{{ Request::segment(3) === 'roles' ? 'active' : '' }}"><a
-              href="{{ url('/admin/account/roles') }}">Manajemen Roles</a></li>
-          </ul>
-          <ul class="dropdown-menu">
-            <li class="{{ Request::segment(3) === 'permission' ? 'active' : '' }}"><a
-              href="{{ url('/admin/account/permission') }}">Manajemen Permission</a></li>
+            <li class="{{ Request::segment(3) === 'user' ? 'active' : '' }}">
+              <a href="{{ url('/admin/account/user') }}">Manajemen Pengguna</a>
+            </li>
           </ul>
         </li>
         <li class="dropdown {{ Request::is('admin/setting*') ? 'active' : '' }}">
-          <a href="#" class="nav-link has-dropdown"><i class="fas fa-cog"></i>
-              <span>General Setting</span></a>
+          <a href="#" class="nav-link has-dropdown">
+            <i class="fas fa-cog"></i>
+            <span>General Setting</span>
+          </a>
           <ul class="dropdown-menu">
             <li class="{{ Request::is('admin/setting*') ? 'active' : '' }}">
               <a href="{{ url('/admin/setting/year') }}">Tahun Aktif</a>
             </li>
+          </ul>
         </li>
       @endif
-      {{-- <li class="dropdown active">
-        <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Dashboard</span></a>
-        <ul class="dropdown-menu">
-          <li><a class="nav-link {{ request()->is('admin/guest*') ? 'active' : '' }}" href="{{ url('/admin/guest') }}">Daftar Tamu</a></li>
-          <li class=active><a class="nav-link" href="index.html">Ecommerce Dashboard</a></li>
-        </ul>
-      </li> --}}  
+    </ul>
   </aside>
 </div>
