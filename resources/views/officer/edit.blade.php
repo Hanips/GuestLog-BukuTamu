@@ -79,6 +79,51 @@
             </section>
         </div>
     @endsection
+
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const forms = document.querySelectorAll('form');
+
+                forms.forEach(form => {
+                    form.addEventListener('submit', async function (event) {
+                        event.preventDefault();
+
+                        const formData = new FormData(form);
+                        const url = form.getAttribute('action');
+                        const method = form.getAttribute('method');
+                        
+                        try {
+                            const response = await fetch(url, {
+                                method: method,
+                                body: formData
+                            });
+
+                            const responseData = await response.json();
+
+                            if (!response.ok) {
+                                console.error('Error response:', responseData);
+                                Notiflix.Notify.failure('Error: ' + (responseData.message || 'Terjadi kesalahan'), {
+                                    timeout: 3000
+                                });
+                            } else {
+                                console.log('Success response:', responseData); 
+                                Notiflix.Notify.success(responseData.message, {
+                                    timeout: 3000
+                                });
+                                location.href = '{{ route('officer.index') }}';
+                            }
+                        } catch (error) {
+                            console.error('Error:', error);
+                            Notiflix.Notify.failure('Terjadi kesalahan dalam mengirim data.', {
+                                timeout: 3000
+                            });
+                        }
+                    });
+                });
+            });
+        </script>
+    @endpush
 @else
     @include('adminpage.access_denied')
 @endif

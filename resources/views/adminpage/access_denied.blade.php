@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
-  <title>Access Denied | SIBPro</title>
+  <title>{{ __('Access Denied') }} | SIBPro</title>
 
   <!-- General CSS Files -->
   <link rel="stylesheet" href="{{ asset('adminpage/modules/bootstrap/css/bootstrap.min.css') }}">
@@ -34,7 +34,7 @@
           <div class="page-inner">
             <h1>403</h1>
             <div class="page-description">
-              You do not have access to this page.
+              {{ __('You do not have access to this page.') }}
             </div>
             <div class="page-search">
               <form>
@@ -66,7 +66,7 @@
   <script src="{{ asset('adminpage/modules/moment.min.js') }}"></script>
   <script src="{{ asset('adminpage/js/stisla.js') }}"></script>
 
-  <!-- JS Libraies -->
+  <!-- JS Libraries -->
 
   <!-- Page Specific JS File -->
 

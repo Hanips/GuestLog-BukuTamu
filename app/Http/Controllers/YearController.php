@@ -20,7 +20,8 @@ class YearController extends Controller
     {
         $notifications = Notification::orderByRaw("CASE WHEN notification_status = 0 THEN 0 ELSE 1 END, updated_at DESC")->limit(10)->get();
         $years = Year::orderByRaw('year_status = "active" desc, updated_at desc')->select('year_name','year_status','id')->get();
-        return view('year.index', compact('years'));
+
+        return view('year.index', compact('notifications', 'years'));
     }
 
     public function store(Request $request)
@@ -73,6 +74,11 @@ class YearController extends Controller
             $year = Year::findOrFail($id);
             $year->year_status = 'active';
             $year->save();
+
+            Notification::create([
+                'notification_content' => Auth::user()->name . " " . "mengaktifkan tahun ajaran" . " " . $year->year_name,
+                'notification_status' => 0
+            ]);
 
             return response()->json([
                 'success' => true,

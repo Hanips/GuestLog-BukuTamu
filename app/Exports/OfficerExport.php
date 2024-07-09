@@ -13,15 +13,12 @@ class OfficerExport implements FromCollection, WithHeadings
     */
     public function collection()
     {
-        // Contoh filter: hanya mengambil user dengan role 'Staff'
         $officers = User::where('role', '=', 'Satpam')->get();
 
-        // Menambahkan nomor urut
         $officers->each(function($officer, $key) {
             $officer->no = $key + 1;
         });
 
-        // Memilih kolom yang ingin diekspor
         return $officers->map(function($officer) {
             return [
                 'No' => $officer->no,

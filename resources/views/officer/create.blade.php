@@ -57,15 +57,6 @@
                                                         </div>
                                                     @enderror
                                                 </div>
-                                                {{-- <div class="form-group">
-                                                    <label for="role" class="form-label">Role</label>
-                                                    <select class="form-control select2" name="role">
-                                                        <option value="">-- Pilih Role --</option>
-                                                        @foreach ($roles as $role)
-                                                            <option value="{{ $role }}">{{ $role }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>                                       --}}
                                                 <input type="hidden" name="role" value="Satpam">  
                                             </div>
                                         </div>
@@ -81,6 +72,51 @@
                 </div>
             </section>
         </div>
+
+        @push('scripts')
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const forms = document.querySelectorAll('form');
+
+                    forms.forEach(form => {
+                        form.addEventListener('submit', async function (event) {
+                            event.preventDefault();
+
+                            const formData = new FormData(form);
+                            const url = form.getAttribute('action');
+                            const method = form.getAttribute('method');
+                            
+                            try {
+                                const response = await fetch(url, {
+                                    method: method,
+                                    body: formData
+                                });
+
+                                const responseData = await response.json();
+
+                                if (!response.ok) {
+                                    console.error('Error response:', responseData);
+                                    Notiflix.Notify.failure('Error: ' + (responseData.message || 'Terjadi kesalahan'), {
+                                        timeout: 3000
+                                    });
+                                } else {
+                                    console.log('Success response:', responseData); 
+                                    Notiflix.Notify.success(responseData.message, {
+                                        timeout: 3000
+                                    });
+                                    location.href = '{{ route('officer.index') }}';
+                                }
+                            } catch (error) {
+                                console.error('Error:', error);
+                                Notiflix.Notify.failure('Terjadi kesalahan dalam mengirim data.', {
+                                    timeout: 3000
+                                });
+                            }
+                        });
+                    });
+                });
+            </script>
+        @endpush
     @endsection
 @else
     @include('adminpage.access_denied')

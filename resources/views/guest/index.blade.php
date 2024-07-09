@@ -47,7 +47,6 @@
                         </div>
                         <div>
                             <a href="{{ route('guest.create') }}" class="btn btn-primary mr-2">{{ __('+ Tambah Data') }}</a>
-                            {{-- <a href="{{ route('guest.excel') }}" class="btn btn-success">Excel</a> --}}
                         </div>
                     </div>
                     <div class="row">
@@ -83,12 +82,9 @@
                                                     <td colspan="7" class="text-center">Belum ada tamu pada periode ini</td>
                                                 </tr>
                                             @else
-                                                @php
-                                                    $no = 1;
-                                                @endphp
                                                 @foreach($ar_guest as $guest)
                                                     <tr>
-                                                        <td class="p-0 text-center">{{ $no }}</td>
+                                                        <td class="p-0 text-center">{{ $loop->iteration + ($ar_guest->currentPage() - 1) * $ar_guest->perPage() }}</td>
                                                         <td>{{ $guest->nama }}</td>
                                                         <td>{{ $guest->instansi }}</td>
                                                         <td>{{ $guest->keperluan }}</td>
@@ -107,28 +103,30 @@
                                                                         <i class="fa fa-eye"></i>
                                                                     </a>
                                                                 </div>
+                                                                {{-- <a class="btn btn-warning btn-sm me-1" href="{{ route('guest.edit', $guest->id) }}" title="Ubah">
+                                                                    <i class="fa fa-edit"></i>
+                                                                </a> --}}
                                                                 @if (Auth::user()->role != 'Satpam')
                                                                     <div class="text-danger mx-2 cursor-pointer">
-                                                                        {{-- <a class="btn btn-warning btn-sm me-1" href="{{ route('guest.edit', $guest->id) }}" title="Ubah">
-                                                                            <i class="fa fa-edit"></i>
-                                                                        </a> --}}
-                                                                        <form method="POST" action="{{ route('guest.destroy', $guest->id) }}" style="display: inline;">
-                                                                            @csrf
-                                                                            @method('DELETE')
-                                                                            <button class="btn btn-danger btn-sm" type="submit" title="Hapus" name="proses" value="hapus" onclick="return confirm('Anda Yakin Data Dihapus?')">
-                                                                                <i class="fa fa-trash"></i>
-                                                                            </button>
-                                                                            <input type="hidden" name="idx" value=""/>
-                                                                        </form>
+                                                                        <button class="btn btn-danger btn-sm delete-button" data-user-id="{{ $guest->id }}" title="Hapus">
+                                                                            <i class="fa fa-trash"></i>
+                                                                        </button>
                                                                     </div>
                                                                 @endif
                                                             </div>
                                                         </td>
                                                     </tr>
-                                                    @php $no++ @endphp
                                                 @endforeach
                                             @endif
                                         </table>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mx-3 mt-3 mb-3">
+                                        <div>
+                                            Menampilkan {{ $ar_guest->firstItem() }} sampai {{ $ar_guest->lastItem() }} dari {{ $ar_guest->total() }} entri
+                                        </div>
+                                        <div>
+                                            {{ $ar_guest->links('vendor.pagination.bootstrap-4') }}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -180,58 +178,89 @@
                 </div>
             </div>
         </div>
-        
-
-        <script>
-            function updateYear() {
-                const form = document.getElementById('updateYearForm');
-                const formData = new FormData(form);
-
-                fetch('/current-year', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Terjadi kesalahan');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.error) {
-                        Notiflix.Notify.failure(data.error, { timeout: 1000 });
-                    } else {
-                        Notiflix.Notify.success(data.message, { timeout: 1000 });
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1000);
-                    }
-                })
-                .catch(error => {
-                    Notiflix.Notify.failure('Error: ' + error.message);
-                });
-            }
-        </script>
 
         @push('scripts')
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/notiflix/2.7.0/notiflix.min.js"></script>
             <script>
+                function updateYear() {
+                    const form = document.getElementById('updateYearForm');
+                    const formData = new FormData(form);
+        
+                    fetch('/current-year', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Terjadi kesalahan');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.error) {
+                            Notiflix.Notify.failure(data.error, { timeout: 3000 });
+                        } else {
+                            Notiflix.Notify.success(data.message, { timeout: 3000 });
+                            setTimeout(() => {
+                                location.reload();
+                            }, 3000);
+                        }
+                    })
+                    .catch(error => {
+                        Notiflix.Notify.failure('Error: ' + error.message);
+                    });
+                }
                 document.getElementById('form-action').addEventListener('submit', function(event) {
                     event.preventDefault();
                     var startDate = new Date(document.getElementById('start_date').value);
                     var finishDate = new Date(document.getElementById('finish_date').value);
-
+        
                     if (finishDate <= startDate) {
                         Notiflix.Notify.failure('Tanggal selesai harus lebih dari tanggal mulai');
                     } else {
                         event.target.submit();
                     }
                 });
+                document.addEventListener('DOMContentLoaded', function() {
+                    const deleteButtons = document.querySelectorAll('.delete-button');
+                    deleteButtons.forEach(button => {
+                        button.addEventListener('click', function() {
+                            const userId = button.getAttribute('data-user-id');
+        
+                            Notiflix.Confirm.show('Konfirmasi', 'Apakah Anda yakin ingin menghapus tamu ini?', 'Ya', 'Batal',
+                                function() {
+                                    fetch(`/admin/guest/${userId}`, {
+                                            method: 'DELETE',
+                                            headers: {
+                                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                            }
+                                        })
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            if (data.success) {
+                                                Notiflix.Notify.success('Tamu berhasil dihapus!', {
+                                                    timeout: 3000
+                                                });
+                                                location.reload();
+                                            } else {
+                                                Notiflix.Notify.failure(data.message, {
+                                                    timeout: 3000
+                                                });
+                                            }
+                                        })
+                                        .catch(error => {
+                                            Notiflix.Notify.failure('Terjadi kesalahan saat menghapus petugas.', {
+                                                timeout: 3000
+                                            });
+                                        });
+                                });
+                        });
+                    });
+                });
             </script>
-        @endpush
+        @endpush        
 
     @endsection
 @else

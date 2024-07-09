@@ -25,15 +25,15 @@
                                 <div class="card-header">
                                     <h4>Form Edit Pengguna</h4>
                                 </div>
-                                <form method="POST" action="{{ route('user.update', $row->id) }}" id="contactForm" enctype="multipart/form-data">
+                                <form method="POST" action="{{ route('user.update', $row->id) }}" id="editUserForm" enctype="multipart/form-data">
                                     @csrf
                                     @method('PUT')
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col-md-8">
                                                 <div class="mb-3">
-                                                    <label for="name" class="form-label">Name</label>
-                                                    <input class="form-control @error('name') is-invalid @enderror" name="name" value="{{ $row->name }}" id="name" type="text" placeholder="Name" required />
+                                                    <label for="name" class="form-label">Nama</label>
+                                                    <input class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name', $row->name) }}" id="name" type="text" placeholder="Nama" required />
                                                     @error('name')
                                                         <div class="invalid-feedback">
                                                             {{ $message }}
@@ -42,7 +42,7 @@
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="email" class="form-label">Email</label>
-                                                    <input class="form-control @error('email') is-invalid @enderror" name="email" value="{{ $row->email }}" id="email" type="text" placeholder="Email" required />
+                                                    <input class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email', $row->email) }}" id="email" type="text" placeholder="Email" required />
                                                     @error('email')
                                                         <div class="invalid-feedback">
                                                             {{ $message }}
@@ -51,10 +51,10 @@
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="role" class="form-label">Role</label>
-                                                    <select class="form-control select2" name="role">
+                                                    <select class="form-control select2 @error('role') is-invalid @enderror" name="role" id="role" required>
                                                         <option value="">-- Pilih Role --</option>
                                                         @foreach ($roles as $role)
-                                                            <option value="{{ $role }}" {{ $role == $row->role ? 'selected' : '' }}>{{ $role }}</option>
+                                                            <option value="{{ $role }}" {{ $role == old('role', $row->role) ? 'selected' : '' }}>{{ $role }}</option>
                                                         @endforeach
                                                     </select>
                                                     @error('role')
@@ -77,6 +77,49 @@
                 </div>
             </section>
         </div>
+
+        @push('scripts')
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const editForm = document.getElementById('editUserForm');
+
+                    editForm.addEventListener('submit', async function (event) {
+                        event.preventDefault();
+
+                        const formData = new FormData(editForm);
+                        const url = editForm.getAttribute('action');
+                        const method = editForm.getAttribute('method');
+                        
+                        try {
+                            const response = await fetch(url, {
+                                method: method,
+                                body: formData
+                            });
+
+                            const responseData = await response.json();
+
+                            if (!response.ok) {
+                                console.error('Error response:', responseData);
+                                Notiflix.Notify.failure('Error: ' + (responseData.message || 'Terjadi kesalahan'), {
+                                    timeout: 3000
+                                });
+                            } else {
+                                console.log('Success response:', responseData); 
+                                Notiflix.Notify.success(responseData.message, {
+                                    timeout: 3000
+                                });
+                                location.href = '{{ route('user.index') }}';
+                            }
+                        } catch (error) {
+                            console.error('Error:', error);
+                            Notiflix.Notify.failure('Terjadi kesalahan dalam mengirim data.', {
+                                timeout: 3000
+                            });
+                        }
+                    });
+                });
+            </script>
+        @endpush
     @endsection
 @else
     @include('adminpage.access_denied')

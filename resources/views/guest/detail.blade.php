@@ -30,6 +30,14 @@
                                                 <input class="form-control" value="{{ $rs->nama }}" id="nama" type="text" placeholder="Nama" disabled />
                                             </div>
                                             <div class="mb-3">
+                                                <label for="NIP" class="form-label">NIP</label>
+                                                <input class="form-control" value="{{ $rs->NIP }}" id="NIP" type="text" placeholder="NIP" disabled />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="jabatan" class="form-label">Jabatan</label>
+                                                <input class="form-control" value="{{ $rs->jabatan }}" id="jabatan" type="text" placeholder="Jabatan" disabled />
+                                            </div>
+                                            <div class="mb-3">
                                                 <label for="instansi" class="form-label">Instansi</label>
                                                 <input class="form-control" value="{{ $rs->instansi }}" id="instansi" type="text" placeholder="Instansi" disabled />
                                             </div>
@@ -48,10 +56,6 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="mb-3">
-                                                <label for="keperluan" class="form-label">Keperluan</label>
-                                                <input class="form-control" value="{{ $rs->keperluan }}" id="keperluan" type="text" placeholder="Keperluan" disabled />
-                                            </div>
-                                            <div class="mb-3">
                                                 <label for="tgl_kunjungan" class="form-label">Tanggal Kunjungan</label>
                                                 <input class="form-control" value="{{ $rs->tgl_kunjungan }}" id="tgl_kunjungan" type="date" disabled />
                                             </div>
@@ -64,12 +68,16 @@
                                                 </div>
                                             </div>
                                             <div class="mb-3">
-                                                <label for="user_id" class="form-label">Petugas Penerima</label>
-                                                <input class="form-control" value="{{ $rs->user->name }}" id="user_id" type="text" placeholder="Nama User" disabled />
+                                                <label for="keperluan" class="form-label">Keperluan</label>
+                                                <input class="form-control" value="{{ $rs->keperluan }}" id="keperluan" type="text" placeholder="Keperluan" disabled />
                                             </div>
                                             <div class="mb-3">
-                                                <label for="user_id" class="form-label">TTD Tamu</label>
-                                                <img src="{{ Storage::url($rs->signature) }}" alt="Signature">
+                                                <label for="saran" class="form-label">Saran</label>
+                                                <input class="form-control" value="{{ $rs->saran }}" id="saran" type="text" placeholder="Saran" disabled />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="user_id" class="form-label">Petugas Penerima</label>
+                                                <input class="form-control" value="{{ $rs->user->name }}" id="user_id" type="text" placeholder="Nama User" disabled />
                                             </div>
                                             <div class="form-group mb-3">
                                                 <label for="status" class="form-label">Status</label>
@@ -80,18 +88,17 @@
                                                     <div class="badge badge-warning" style="font-size: 1em; padding: 0.5em 0.7em;">Berlangsung</div>
                                                 @endif
                                             </div>
+                                            <div class="mb-3">
+                                                <label for="user_id" class="form-label">TTD Tamu</label><br>
+                                                <img src="{{ asset('storage/signatures/' . $rs->signature) }}" alt="Signature" style="border: 2px solid #000;">
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="card-footer text-right">
                                         <a href="{{ url('/admin/guest') }}" class="btn btn-primary">Kembali</a>
                                         @if (Auth::user()->role != 'Satpam')
                                             <a class="btn btn-warning" href="{{ route('guest.edit', $rs->id) }}" title="Ubah">Ubah</a>
-                                            <form method="POST" action="{{ route('guest.destroy', $rs->id) }}" style="display: inline;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button class="btn btn-danger" type="submit" title="Hapus" name="proses" value="hapus" onclick="return confirm('Anda Yakin Data Dihapus?')">Hapus</button>
-                                                <input type="hidden" name="idx" value=""/>
-                                            </form>
+                                            <button class="btn btn-danger delete-button" data-user-id="{{ $rs->id }}" title="Hapus">Hapus</button>
                                         @endif
                                     </div>
                                 </div>
@@ -101,6 +108,48 @@
                 </div>
             </section>
         </div>
+
+        @push('scripts')
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const deleteButtons = document.querySelectorAll('.delete-button');
+                    deleteButtons.forEach(button => {
+                        button.addEventListener('click', function() {
+                            const userId = button.getAttribute('data-user-id');
+
+                            Notiflix.Confirm.show('Konfirmasi', 'Apakah Anda yakin ingin menghapus tamu ini?', 'Ya', 'Batal',
+                                function() {
+                                    fetch(`/admin/guest/${userId}`, {
+                                            method: 'DELETE',
+                                            headers: {
+                                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                            }
+                                        })
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            if (data.success) {
+                                                Notiflix.Notify.success('Tamu berhasil dihapus!', {
+                                                    timeout: 3000
+                                                });
+                                                location.href = '{{ route('guest.index') }}';
+                                            } else {
+                                                Notiflix.Notify.failure(data.message, {
+                                                    timeout: 3000
+                                                });
+                                            }
+                                        })
+                                        .catch(error => {
+                                            Notiflix.Notify.failure('Terjadi kesalahan saat menghapus tamu.', {
+                                                timeout: 3000
+                                            });
+                                        });
+                                });
+                        });
+                    });
+                });
+            </script>
+        @endpush
+
     @endsection
 @else
     @include('adminpage.access_denied')

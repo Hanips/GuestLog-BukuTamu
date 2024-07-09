@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\GuestController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OfficerController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\YearController;
@@ -14,6 +15,18 @@ Auth::routes();
 Route::middleware(['auth'])->group(function () {
     // Admin page
     Route::get('/admin', [HomeController::class, 'index'])->name('home.dashboard');
+
+    // Notifications routes
+    Route::post('/readall', [NotificationController::class, 'store'])->name('storeNotification');
+    Route::post('/readnotif/{id}', [NotificationController::class, 'update'])->name('updateNotification');
+    Route::get('/admin/notifications', [NotificationController::class, 'index'])->name('notif');
+
+    // Profile routes
+    Route::get('/admin/profile', [UserController::class, 'profile'])->name('profile');
+    Route::get('/admin/profile/edit', [UserController::class, 'editProfile'])->name('profile.edit');
+    Route::put('/admin/profile/update', [UserController::class, 'updateProfile'])->name('profile.update');
+    Route::get('/admin/profile/change-password', [UserController::class, 'editPassword'])->name('profile.editPassword');
+    Route::put('/admin/profile/update-password', [UserController::class, 'updatePassword'])->name('profile.updatePassword');
     
     // Guest routes
     Route::get('/admin/guest', [GuestController::class, 'index']);
