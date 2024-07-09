@@ -1,80 +1,86 @@
-<!doctype html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
+  <title> @yield('title_page') | SIBPro</title>
+  <link
+  href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAAAAAAADdZgUA/vz7AO+6kADcZAAA////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMzMzMzMzMzMzMzMzMzMzMzMzMzREQ0QzMzMzRERERDMzMzREMzREMzMzNEMzNEQzMzM0QzMzRDMzMzREMzREMzMzNERAREQzMzMzRERERDMzMzM0RBJEMzMzMzMzMkQzMzMzMzMyRDMzMzMzMzJEMzMzMzMzMzMzMzMzMzMzMzMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+  rel="icon" type="image/x-icon">
 
-    <!-- CSRF Token -->
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+  <!-- General CSS Files -->
+  <link rel="stylesheet" href="{{ asset('adminpage/modules/bootstrap/css/bootstrap.min.css') }}">
+  <link rel="stylesheet" href="{{ asset('adminpage/modules/fontawesome/css/all.min.css') }}">
 
-    <title> @yield('title_page') | SIBPro</title>
+  <!-- CSS Libraries -->
+  <link rel="stylesheet" href="{{ asset('adminpage/modules/jqvmap/dist/jqvmap.min.css') }}">
+  <link rel="stylesheet" href="{{ asset('adminpage/modules/summernote/summernote-bs4.css') }}">
+  <link rel="stylesheet" href="{{ asset('adminpage/modules/owlcarousel2/dist/assets/owl.carousel.min.css') }}">
+  <link rel="stylesheet" href="{{ asset('adminpage/modules/owlcarousel2/dist/assets/owl.theme.default.min.css') }}">
+  <link rel="stylesheet" href="{{ asset('adminpage/modules/notiflix/src/notiflix.css') }}">
+  {{-- <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.4/css/bootstrap3/bootstrap-switch.min.css" rel="stylesheet"> --}}
 
-    <!-- Fonts -->
-    <link rel="dns-prefetch" href="//fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
+  <!-- Template CSS -->
+  <link rel="stylesheet" href="{{ asset('adminpage/css/style.css') }}">
+  <link rel="stylesheet" href="{{ asset('adminpage/css/components.css') }}">
+  <!-- Start GA -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-94034622-3"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
 
-    <!-- Scripts -->
-    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    gtag('config', 'UA-94034622-3');
+  </script>
 </head>
+
 <body>
-    <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
-            <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">
-                    {{ __('Buku Tamu') }}
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+  <div id="app">
+    <div class="main-wrapper main-wrapper-1">
 
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <!-- Left Side Of Navbar -->
-                    <ul class="navbar-nav me-auto">
+        <!-- ======= Main Content ======= -->
+        @yield('content')
 
-                    </ul>
-
-                    <!-- Right Side Of Navbar -->
-                    <ul class="navbar-nav ms-auto">
-                        <!-- Authentication Links -->
-                        @guest
-                            @if (Route::has('login'))
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
-                                </li>
-                            @endif
-
-                            @if (Route::has('register'))
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
-                                </li>
-                            @endif
-                        @else
-                            <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    {{ Auth::user()->name }}
-                                </a>
-
-                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="{{ route('logout') }}"
-                                       onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                                        {{ __('Logout') }}
-                                    </a>
-
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                        @csrf
-                                    </form>
-                                </div>
-                            </li>
-                        @endguest
-                    </ul>
-                </div>
+        <footer class="main-footer">
+            <div class="footer-left">
+                SMK BP Darul Ulum Rejosari, Grobogan
             </div>
-        </nav>
-
-        <main class="py-4">
-            @yield('content')
-        </main>
+            <div class="footer-right">
+                
+            </div>
+        </footer>
     </div>
+  </div>
+
+  <!-- General JS Scripts -->
+  <script src="{{ asset('adminpage/modules/jquery.min.js') }}"></script>
+  <script src="{{ asset('adminpage/modules/popper.js') }}"></script>
+  <script src="{{ asset('adminpage/modules/tooltip.js') }}"></script>
+  <script src="{{ asset('adminpage/modules/bootstrap/js/bootstrap.min.js') }}"></script>
+  <script src="{{ asset('adminpage/modules/nicescroll/jquery.nicescroll.min.js') }}"></script>
+  <script src="{{ asset('adminpage/modules/moment.min.js') }}"></script>
+  <script src="{{ asset('adminpage/js/stisla.js') }}"></script>
+  
+  <!-- JS Libraies -->
+  <script src="{{ asset('adminpage/modules/jquery.sparkline.min.js') }}"></script>
+  <script src="{{ asset('adminpage/modules/chart.min.js') }}"></script>
+  <script src="{{ asset('adminpage/modules/owlcarousel2/dist/owl.carousel.min.js') }}"></script>
+  <script src="{{ asset('adminpage/modules/summernote/summernote-bs4.js') }}"></script>
+  <script src="{{ asset('adminpage/modules/chocolat/dist/js/jquery.chocolat.min.js') }}"></script>
+  <script src="{{ asset('adminpage/modules/notiflix/src/notiflix.js') }}"></script>
+
+  <!-- Page Specific JS File -->
+  <script src="{{ asset('adminpage/js/page/index.js') }}"></script>
+  
+  <!-- Template JS File -->
+  <script src="{{ asset('adminpage/js/scripts.js') }}"></script>
+  <script src="{{ asset('adminpage/js/custom.js') }}"></script>
+
+  {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.4/js/bootstrap-switch.min.js"></script>
+  <script>
+      $(document).ready(function(){
+          $("[name='status']").bootstrapSwitch();
+      });
+  </script> --}}
 </body>
 </html>

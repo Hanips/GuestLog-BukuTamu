@@ -4,37 +4,23 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Exports\OfficerExport;
+use App\Exports\UserExport;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
-class OfficerController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
-        $search = $request->input('search');
-
-        // Mulai query dengan mengambil seluruh data users dengan peran Satpam dan mengurutkan berdasarkan id
-        $query = DB::table('users')
+        $ar_user = DB::table('users')
                     ->select('users.*')
-                    ->where('role', 'Satpam')
-                    ->orderBy('users.id', 'desc');
+                    ->orderBy('users.id', 'desc')
+                    ->get();
 
-        // Jika ada input pencarian, tambahkan klausa where
-        if ($search) {
-            $query->where(function($query) use ($search) {
-                $query->where('name', 'LIKE', "%{$search}%")
-                    ->orWhere('email', 'LIKE', "%{$search}%");
-            });
-        }
-
-        // Dapatkan hasil query
-        $ar_officer = $query->get();
-
-        return view('officer.index', compact('ar_officer'));
+        return view('user.index', compact('ar_user'));
     }
 
     /**
@@ -44,7 +30,7 @@ class OfficerController extends Controller
     {
         $roles = User::ROLES; // Ambil data role dari model User
 
-        return view('officer.create', compact('roles'));
+        return view('user.create', compact('roles'));
     }
 
     /**
@@ -81,12 +67,12 @@ class OfficerController extends Controller
                 'role'=>$request->role,
             ]);
        
-        return redirect()->route('officer.index')
+        return redirect()->route('user.index')
                         ->with('success','Data Petugas Baru Berhasil Disimpan');
         }
         catch (\Exception $e){
             //return redirect()->back()
-            return redirect()->route('officer.index')
+            return redirect()->route('user.index')
                 ->with('error', 'Terjadi Kesalahan Saat Input Data!');
         }
     }
@@ -97,7 +83,7 @@ class OfficerController extends Controller
     public function show(string $id)
     {
         $rs = User::findOrFail($id);
-        return view('officer.detail', compact('rs'));
+        return view('user.detail', compact('rs'));
     }
 
     /**
@@ -108,7 +94,7 @@ class OfficerController extends Controller
         $roles = User::ROLES;
         //tampilkan data lama di form
         $row = User::find($id);
-        return view('officer.edit',compact('row', 'roles'));
+        return view('user.edit',compact('row', 'roles'));
     }
 
     /**
@@ -134,20 +120,20 @@ class OfficerController extends Controller
 
         try {
             // Ambil data tamu berdasarkan ID
-            $officer = User::findOrFail($id);
+            $user = User::findOrFail($id);
 
             // Update atribut-atribut data tamu
-            $officer->name = $request->name;
-            $officer->email = $request->email;
-            $officer->role = $request->role;
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->role = $request->role;
 
             // Simpan perubahan ke dalam database
-            $officer->save();
+            $user->save();
 
-            return redirect()->route('officer.index')
+            return redirect()->route('user.index')
                             ->with('success', 'Data Petugas Berhasil Diubah');
         } catch (\Exception $e) {
-            return redirect()->route('officer.index')
+            return redirect()->route('user.index')
                             ->with('error', 'Terjadi Kesalahan Saat Memperbarui Data Petugas');
         }
     }
@@ -157,14 +143,14 @@ class OfficerController extends Controller
      */
     public function destroy(string $id)
     {
-        $officer = User::find($id);
-        $officer->delete();
-        return redirect()->route('officer.index')
+        $user = User::find($id);
+        $user->delete();
+        return redirect()->route('user.index')
                         ->with('success','Data Petugas Berhasil Dihapus');
     }
 
-    public function officerExcel()
+    public function userExcel()
     {
-        return Excel::download(new OfficerExport, 'officer_'.date('d-m-Y').'.xlsx');
+        return Excel::download(new UserExport, 'user_'.date('d-m-Y').'.xlsx');
     }
 }

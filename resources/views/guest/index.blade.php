@@ -11,9 +11,11 @@
                         <h1>{{ __('Data Tamu') }}</h1>
                     </div>
                     <div class="d-md-flex d-inline">
-                        <button class="btn btn-success mx-2 my-3 my-md-0" data-toggle="modal" data-target="#exportModal">
-                            <i class="fas fa-file mx-1"></i> Export Tamu
-                        </button>
+                        @if (Auth::user()->role != 'Satpam')
+                            <button class="btn btn-success mx-2 my-3 my-md-0" data-toggle="modal" data-target="#exportModal">
+                                <i class="fas fa-file mx-1"></i> Export Tamu
+                            </button>
+                        @endif
                         <div class="right-content">
                             <div class="d-flex">
                                 <form id="updateYearForm">
@@ -52,13 +54,13 @@
                         <div class="col-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <h4>{{ __('Tabel Tamu') }}</h4>
+                                    <h4>Tabel Tamu</h4>
                                     <div class="card-header-form">
-                                        <form>
+                                        <form action="{{ route('guest.index') }}" method="GET">
                                             <div class="input-group">
-                                                <input type="text" class="form-control" placeholder="Search">
+                                                <input type="text" name="search" class="form-control" placeholder="Search" value="{{ request('search') }}">
                                                 <div class="input-group-btn">
-                                                    <button class="btn btn-primary"><i class="fas fa-search"></i></button>
+                                                    <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i></button>
                                                 </div>
                                             </div>
                                         </form>
@@ -76,44 +78,56 @@
                                                 <th>Status</th>
                                                 <th>Action</th>
                                             </tr>
-                                            @php
-                                                $no = 1;
-                                            @endphp
-                                            @foreach($ar_guest as $guest)
+                                            @if ($ar_guest->isEmpty())
                                                 <tr>
-                                                    <td class="p-0 text-center">{{ $no }}</td>
-                                                    <td>{{ $guest->nama }}</td>
-                                                    <td>{{ $guest->instansi }}</td>
-                                                    <td>{{ $guest->keperluan }}</td>
-                                                    <td>{{ $guest->tgl_kunjungan }}</td>
-                                                    <td>
-                                                        @if ($guest->status == 'done')
-                                                            <div class="badge badge-success">Selesai</div>
-                                                        @else
-                                                            <div class="badge badge-warning">Berlangsung</div>
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        <div class="btn-group">
-                                                            <a class="btn btn-info btn-sm me-1" href="{{ route('guest.show', $guest->id) }}" title="Detail">
-                                                                <i class="fa fa-eye"></i>
-                                                            </a>
-                                                            {{-- <a class="btn btn-warning btn-sm me-1" href="{{ route('guest.edit', $guest->id) }}" title="Ubah">
-                                                                <i class="fa fa-edit"></i>
-                                                            </a> --}}
-                                                            <form method="POST" action="{{ route('guest.destroy', $guest->id) }}" style="display: inline;">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button class="btn btn-danger btn-sm" type="submit" title="Hapus" name="proses" value="hapus" onclick="return confirm('Anda Yakin Data Dihapus?')">
-                                                                    <i class="fa fa-trash"></i>
-                                                                </button>
-                                                                <input type="hidden" name="idx" value=""/>
-                                                            </form>
-                                                        </div>
-                                                    </td>
+                                                    <td colspan="7" class="text-center">Belum ada tamu pada periode ini</td>
                                                 </tr>
-                                                @php $no++ @endphp
-                                            @endforeach
+                                            @else
+                                                @php
+                                                    $no = 1;
+                                                @endphp
+                                                @foreach($ar_guest as $guest)
+                                                    <tr>
+                                                        <td class="p-0 text-center">{{ $no }}</td>
+                                                        <td>{{ $guest->nama }}</td>
+                                                        <td>{{ $guest->instansi }}</td>
+                                                        <td>{{ $guest->keperluan }}</td>
+                                                        <td>{{ $guest->tgl_kunjungan }}</td>
+                                                        <td>
+                                                            @if ($guest->status == 'done')
+                                                                <div class="badge badge-success">Selesai</div>
+                                                            @else
+                                                                <div class="badge badge-warning">Berlangsung</div>
+                                                            @endif
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex justify-content-start">
+                                                                <div class="text-warning mx-2 cursor-pointer">
+                                                                    <a class="btn btn-info btn-sm me-1" href="{{ route('guest.show', $guest->id) }}" title="Detail">
+                                                                        <i class="fa fa-eye"></i>
+                                                                    </a>
+                                                                </div>
+                                                                @if (Auth::user()->role != 'Satpam')
+                                                                    <div class="text-danger mx-2 cursor-pointer">
+                                                                        {{-- <a class="btn btn-warning btn-sm me-1" href="{{ route('guest.edit', $guest->id) }}" title="Ubah">
+                                                                            <i class="fa fa-edit"></i>
+                                                                        </a> --}}
+                                                                        <form method="POST" action="{{ route('guest.destroy', $guest->id) }}" style="display: inline;">
+                                                                            @csrf
+                                                                            @method('DELETE')
+                                                                            <button class="btn btn-danger btn-sm" type="submit" title="Hapus" name="proses" value="hapus" onclick="return confirm('Anda Yakin Data Dihapus?')">
+                                                                                <i class="fa fa-trash"></i>
+                                                                            </button>
+                                                                            <input type="hidden" name="idx" value=""/>
+                                                                        </form>
+                                                                    </div>
+                                                                @endif
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    @php $no++ @endphp
+                                                @endforeach
+                                            @endif
                                         </table>
                                     </div>
                                 </div>
@@ -128,12 +142,12 @@
             <div class="modal-dialog modal-md modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Export Realisasi Dana</h5>
+                        <h5 class="modal-title">Export Tamu</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form id="form-action" method="post" action="{{-- route('exportRealisasi') --}}">
+                    <form id="form-action" method="post" action="{{ route('guest.excel') }}">
                         @csrf
                         <div class="modal-body">
                             <div class="row pt-3 pb-1">
@@ -148,11 +162,11 @@
                                         </select>
                                     </div>
                                     <div class="form-group">
-                                        <label for="year_name">Tanggal Mulai</label>
+                                        <label for="start_date">Tanggal Mulai</label>
                                         <input type="date" id="start_date" class="form-control" name="start_date" required autofocus>
                                     </div>
                                     <div class="form-group">
-                                        <label for="year_name">Tanggal Selesai</label>
+                                        <label for="finish_date">Tanggal Selesai</label>
                                         <input type="date" id="finish_date" class="form-control" name="finish_date" required>
                                     </div>
                                 </div>
@@ -166,6 +180,7 @@
                 </div>
             </div>
         </div>
+        
 
         <script>
             function updateYear() {

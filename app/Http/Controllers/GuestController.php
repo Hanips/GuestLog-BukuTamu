@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Exports\GuestsExport;
 use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
 class GuestController extends Controller
@@ -16,16 +18,37 @@ class GuestController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $activeYearId = Year::where('year_current', 'selected')->value('id');
         $years = Year::orderBy("updated_at", "DESC")->get();
-        $ar_guest = Guest::where('year_id', $activeYearId)
-                                    ->select('guests.*')
-                                    ->orderBy('guests.id', 'desc')
-                                    ->get();
-        return view('guest.index', compact('ar_guest', 'years'));
 
+        $search = $request->input('search');
+
+        $query = DB::table('guests')
+                    ->select('guests.*')
+                    ->where('year_id', $activeYearId)
+                    ->orderBy('guests.id', 'desc');
+
+        // Jika ada input pencarian, tambahkan klausa where
+        if ($search) {
+            $query->where(function($query) use ($search) {
+                $query->where('nama', 'LIKE', "%{$search}%")
+                    ->orWhere('instansi', 'LIKE', "%{$search}%")
+                    ->orWhere('no_telp', 'LIKE', "%{$search}%")
+                    ->orWhere('email', 'LIKE', "%{$search}%")
+                    ->orWhere('alamat', 'LIKE', "%{$search}%")
+                    ->orWhere('keperluan', 'LIKE', "%{$search}%")
+                    ->orWhere('tgl_kunjungan', 'LIKE', "%{$search}%")
+                    ->orWhere('waktu_masuk', 'LIKE', "%{$search}%")
+                    ->orWhere('waktu_keluar', 'LIKE', "%{$search}%")
+                    ->orWhere('status', 'LIKE', "%{$search}%");
+            });
+        }
+
+        $ar_guest = $query->get();
+
+        return view('guest.index', compact('ar_guest', 'years'));
     }
 
 
@@ -232,8 +255,32 @@ class GuestController extends Controller
                         ->with('success','Data Tamu Berhasil Dihapus');
     }
 
-    public function guestExcel()
+    public function guestExcel(Request $request)
     {
-        return Excel::download(new GuestsExport, 'guests_'.date('d-m-Y').'.xlsx');
+        $tahunAjaran = $request->input('nama_tahun');
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('finish_date');
+
+        // Misalnya, Anda ingin menggunakan query untuk mengekspor data sesuai dengan filter yang diberikan
+        $query = Guest::query();
+
+        // Filter berdasarkan tahun ajaran
+        if ($tahunAjaran) {
+            $year = Year::where('year_name', $tahunAjaran)->first();
+            if ($year) {
+                $query->where('year_id', $year->id);
+            }
+        }
+
+        // Filter berdasarkan rentang tanggal kunjungan
+        if ($startDate && $endDate) {
+            // Ubah format $startDate dan $endDate menjadi Y-m-d
+            $startDate = date('Y-m-d', strtotime($startDate));
+            $endDate = date('Y-m-d', strtotime($endDate)); 
+            $query->whereBetween('tgl_kunjungan', [$startDate, $endDate]);
+        }
+
+        // Eksekusi query dan ekspor menggunakan Excel
+        return Excel::download(new GuestsExport($query->get()), 'guests_'.date('d-m-Y').'.xlsx');
     }
 }
