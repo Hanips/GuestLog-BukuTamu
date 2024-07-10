@@ -12,6 +12,10 @@ class Guest extends Model
 
     public const STATUS = ['done', 'ongoing'];
 
+    protected $casts = [
+        'tgl_kunjungan' => 'date',
+    ];
+    
     protected $fillable = [
         'user_id',
         'year_id',

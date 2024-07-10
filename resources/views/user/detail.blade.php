@@ -17,14 +17,14 @@
 
                 <div class="section-body">
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <div class="card">
                                 <div class="card-header">
                                     <h4>Detail Pengguna</h4>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col-md-8">
+                                        <div class="col-md-12">
                                             <div class="mb-3">
                                                 <label for="name" class="form-label">Nama Pengguna</label>
                                                 <input class="form-control" value="{{ $rs->name }}" id="name" type="text" disabled />
@@ -42,14 +42,12 @@
                                                 <input class="form-control" value="{{ $rs->created_at->format('d M Y') }}" id="created_at" type="text" disabled />
                                             </div>
                                         </div>
+                                        <div class="card-footer text-left">
+                                            <a href="{{ url('/admin/account/user') }}" class="btn btn-primary">Kembali</a>
+                                            <a class="btn btn-warning" href="{{ route('user.edit', $rs->id) }}" title="Ubah">Ubah</a>
+                                            <button class="btn btn-danger delete-button" data-user-id="{{ $rs->id }}" title="Hapus">Hapus</button>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="card-footer text-right">
-                                    <a href="{{ url('/admin/account/user') }}" class="btn btn-primary">Kembali</a>
-                                    @if (Auth::user()->role != 'Satpam')
-                                        <a class="btn btn-warning" href="{{ route('user.edit', $rs->id) }}" title="Ubah">Ubah</a>
-                                        <button class="btn btn-danger delete-button" data-user-id="{{ $rs->id }}" title="Hapus">Hapus</button>
-                                    @endif
                                 </div>
                             </div>
                         </div>

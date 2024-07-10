@@ -20,7 +20,7 @@
                     <p class="section-lead">Silakan ubah formulir pengguna di bawah ini.</p>
 
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <div class="card">
                                 <div class="card-header">
                                     <h4>Form Edit Pengguna</h4>
@@ -30,7 +30,7 @@
                                     @method('PUT')
                                     <div class="card-body">
                                         <div class="row">
-                                            <div class="col-md-8">
+                                            <div class="col-md-12">
                                                 <div class="mb-3">
                                                     <label for="name" class="form-label">Nama</label>
                                                     <input class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name', $row->name) }}" id="name" type="text" placeholder="Nama" required />
@@ -64,11 +64,11 @@
                                                     @enderror
                                                 </div>
                                             </div>
+                                            <div class="card-footer text-left">
+                                                <button class="btn btn-primary" type="submit">Simpan</button>
+                                                <a href="{{ url('/admin/account/user') }}" class="btn btn-danger">Batal</a>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="card-footer text-right">
-                                        <button class="btn btn-primary" type="submit">Simpan</button>
-                                        <a href="{{ url('/admin/account/user') }}" class="btn btn-danger">Batal</a>
                                     </div>
                                 </form>
                             </div>

@@ -98,7 +98,7 @@
                                             <div class="col-md-6">
                                                 <div class="mb-3">
                                                     <label for="tgl_kunjungan" class="form-label">Tanggal Kunjungan</label>
-                                                    <input class="form-control @error('tgl_kunjungan') is-invalid @enderror" name="tgl_kunjungan" value="{{ $row->tgl_kunjungan }}" id="tgl_kunjungan" type="date" required />
+                                                    <input class="form-control @error('tgl_kunjungan') is-invalid @enderror" name="tgl_kunjungan" value="{{ $row->tgl_kunjungan->format('Y-m-d') }}" id="tgl_kunjungan" type="date" required />
                                                     @error('tgl_kunjungan')
                                                     <div class="invalid-feedback">
                                                         {{ $message }}
@@ -179,11 +179,11 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div class="card-footer text-left">
+                                                <button class="btn btn-primary" type="submit">Simpan</button>
+                                                <a href="{{ url('/admin/guest') }}" class="btn btn-danger">Batal</a>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="card-footer text-right">
-                                        <button class="btn btn-primary" type="submit">Simpan</button>
-                                        <a href="{{ url('/admin/guest') }}" class="btn btn-danger">Batal</a>
                                     </div>
                                 </form>
                             </div>

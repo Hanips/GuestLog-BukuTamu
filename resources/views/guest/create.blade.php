@@ -161,11 +161,11 @@
                                                 <input type="hidden" name="year_id" value="{{ $activeYear->id }}">
                                                 <input type="hidden" name="status" id="status" value="">
                                             </div>
+                                            <div class="card-footer text-left">
+                                                <button class="btn btn-primary" type="submit" onclick="checkStatus()">Simpan</button>
+                                                <a href="{{ url('/admin/guest') }}" class="btn btn-danger">Batal</a>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="card-footer text-right">
-                                        <button class="btn btn-primary" type="submit" onclick="checkStatus()">Simpan</button>
-                                        <a href="{{ url('/admin/guest') }}" class="btn btn-danger">Batal</a>
                                     </div>
                                 </form>
                             </div>

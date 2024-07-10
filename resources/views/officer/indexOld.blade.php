@@ -29,63 +29,62 @@
                             </div>
                         @endif
                     </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <h4>{{ __('Tabel Petugas') }}</h4>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-striped" id="datatables">
-                                    <thead>
-                                        <tr>
-                                            <th>No</th>
-                                            <th>Nama</th>
-                                            <th>Email</th>
-                                            <th>Role</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @if ($ar_officer->isEmpty())
-                                            <tr>
-                                                <td colspan="5" class="text-center">Belum ada data petugas</td>
-                                            </tr>
-                                        @else
-                                            @php
-                                                $no = 1;
-                                            @endphp
-                                            @foreach($ar_officer as $officer)
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4>{{ __('Tabel Petugas') }}</h4>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="table-responsive">
+                                        <table id="table-officer" class="table table-striped">
+                                            <thead>
                                                 <tr>
-                                                    <td>{{ $no++ }}</td>
-                                                    <td>{{ $officer->name }}</td>
-                                                    <td>{{ $officer->email }}</td>
-                                                    <td><div class="badge badge-info">{{ $officer->role }}</div></td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-start">
-                                                            <div class="text-warning mx-2 cursor-pointer">
-                                                                <a class="btn btn-info btn-sm me-1" href="{{ route('officer.show', $officer->id) }}" title="Detail">
-                                                                    <i class="fa fa-eye"></i>
-                                                                </a>
-                                                            </div>
-                                                            @if (Auth::user()->role != 'Satpam')
-                                                                <div class="text-warning mx-2 cursor-pointer">
-                                                                    <a class="btn btn-warning btn-sm me-1" href="{{ route('officer.edit', $officer->id) }}" title="Ubah">
-                                                                        <i class="fa fa-edit"></i>
-                                                                    </a>
-                                                                </div>
-                                                                <div class="text-danger mx-2 cursor-pointer">
-                                                                    <button class="btn btn-danger btn-sm delete-button" data-user-id="{{ $officer->id }}" title="Hapus">
-                                                                        <i class="fa fa-trash"></i>
-                                                                    </button>
-                                                                </div>
-                                                            @endif
-                                                        </div>
-                                                    </td>
+                                                    <th>No</th>
+                                                    <th>Nama</th>
+                                                    <th>Email</th>
+                                                    <th>Role</th>
+                                                    <th>Action</th>
                                                 </tr>
-                                            @endforeach
-                                        @endif
-                                    </tbody>
-                                </table>
+                                            </thead>
+                                            <tbody>
+                                                @if ($ar_officer->isEmpty())
+                                                    <tr>
+                                                        <td colspan="5" class="text-center">Belum ada data petugas</td>
+                                                    </tr>
+                                                @else
+                                                    @php
+                                                        $no = 1;
+                                                    @endphp
+                                                    @foreach($ar_officer as $officer)
+                                                        <tr>
+                                                            <td>{{ $no++ }}</td>
+                                                            <td>{{ $officer->name }}</td>
+                                                            <td>{{ $officer->email }}</td>
+                                                            <td><div class="badge badge-info">{{ $officer->role }}</div></td>
+                                                            <td>
+                                                                <div class="d-flex justify-content-start">
+                                                                    <div class="text-warning mx-2 cursor-pointer">
+                                                                        <a class="btn btn-info btn-sm me-1" href="{{ route('officer.show', $officer->id) }}" title="Detail">
+                                                                            <i class="fa fa-eye"></i>
+                                                                        </a>
+                                                                    </div>
+                                                                    @if (Auth::user()->role != 'Satpam')
+                                                                        <div class="text-danger mx-2 cursor-pointer">
+                                                                            <button class="btn btn-danger btn-sm delete-button" data-user-id="{{ $officer->id }}" title="Hapus">
+                                                                                <i class="fa fa-trash"></i>
+                                                                            </button>
+                                                                        </div>
+                                                                    @endif
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                @endif
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -137,7 +136,7 @@
             <script src="{{ asset('adminpage/js/page/modules-datatables.js') }}"></script>
 
             <script>
-                $('#datatables').dataTable();
+                $('#table-officer').dataTable();
             </script>
         @endpush
     @endsection

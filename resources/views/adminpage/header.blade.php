@@ -64,7 +64,7 @@
             </a>
             <div class="dropdown-menu dropdown-menu-right">
                 <div class="dropdown-title">Logged in</div>
-                <a href="{{ url('/admin/profile') }}" class="dropdown-item has-icon">
+                <a href="{{ url('/admin/profile') }}" class="dropdown-item has-icon" {{ Request::is('admin/profile*') ? 'active' : '' }}>
                     <i class="far fa-user"></i> Profile
                 </a>
                 <div class="dropdown-divider"></div>

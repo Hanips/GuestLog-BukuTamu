@@ -17,14 +17,14 @@
 
                 <div class="section-body">
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <div class="card">
                                 <form method="POST" action="{{ route('profile.update', $user->id) }}" id="contactForm" enctype="multipart/form-data">
                                     @csrf
                                     @method('PUT')
                                     <div class="card-body">
                                         <div class="row">
-                                            <div class="col-md-8">
+                                            <div class="col-md-12">
                                                 <div class="mb-3">
                                                     <label for="name" class="form-label">Name</label>
                                                     <input class="form-control @error('name') is-invalid @enderror" name="name" value="{{ $user->name }}" id="name" type="text" placeholder="Name" required />
@@ -50,12 +50,13 @@
                                                     </select>
                                                 </div>
                                             </div>
+                                            
                                         </div>
-                                    </div>
-                                    <div class="card-footer d-flex justify-content-between">
                                         <div>
                                             <a href="{{ url('/admin/profile/change-password') }}" class="btn btn-warning">Ubah Password</a>
                                         </div>
+                                    </div>
+                                    <div class="card-footer text-left">
                                         <div>
                                             <button class="btn btn-primary" type="submit">Simpan</button>
                                             <a href="{{ url('/admin/profile') }}" class="btn btn-danger">Batal</a>

@@ -16,11 +16,11 @@
 
                 <div class="section-body">
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <div class="card">
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col-md-8">
+                                        <div class="col-md-12">
                                             <div class="mb-3">
                                                 <label for="name" class="form-label">Nama Pengguna</label>
                                                 <input class="form-control" value="{{ $rs->name }}" id="name" type="text" disabled />
@@ -40,8 +40,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="card-footer text-right">
-                                    <a class="btn btn-warning" href="{{ route('profile.edit', $rs->id) }}" title="Ubah">Ubah Profil</a>
+                                <div class="card-footer text-left">
+                                    <a class="btn btn-primary" href="{{ route('profile.edit', $rs->id) }}" title="Ubah">Ubah Profil</a>
                                 </div>
                             </div>
                         </div>

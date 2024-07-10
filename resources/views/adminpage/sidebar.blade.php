@@ -1,10 +1,10 @@
 <div class="main-sidebar sidebar-style-2">
   <aside id="sidebar-wrapper">
     <div class="sidebar-brand">
-      <a href="index.html">SIBPRO</a>
+      <a href="index.html">GUESTLOG</a>
     </div>
     <div class="sidebar-brand sidebar-brand-sm">
-      <a href="index.html">SIB</a>
+      <a href="index.html">GL</a>
     </div>
     <ul class="sidebar-menu">
       <li class="menu-header">Dashboard</li>
@@ -21,7 +21,7 @@
           <span>Data Tamu</span>
         </a>
       </li>
-      <li class="{{ Request::is('admin/officer') ? 'active' : '' }}">
+      <li class="{{ Request::is('admin/officer*') ? 'active' : '' }}">
         <a class="nav-link" href="{{ url('/admin/officer') }}">
           <i class="fas fa-id-badge"></i>
           <span>Master Petugas</span>

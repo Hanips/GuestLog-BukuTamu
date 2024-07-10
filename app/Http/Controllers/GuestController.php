@@ -19,41 +19,14 @@ class GuestController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
         $activeYearId = Year::where('year_current', 'selected')->value('id');
         $years = Year::orderBy("updated_at", "DESC")->get();
-
         $notifications = Notification::orderByRaw("CASE WHEN notification_status = 0 THEN 0 ELSE 1 END, updated_at DESC")->limit(10)->get();
-
-        $search = $request->input('search');
-
-        $query = DB::table('guests')
-                    ->select('guests.*')
-                    ->where('year_id', $activeYearId)
-                    ->orderBy('guests.id', 'desc');
-
-        // Jika ada input pencarian, tambahkan klausa where
-        if ($search) {
-            $query->where(function($query) use ($search) {
-                $query->where('nama', 'LIKE', "%{$search}%")
-                    ->orWhere('NIP', 'LIKE', "%{$search}%")
-                    ->orWhere('jabatan', 'LIKE', "%{$search}%")
-                    ->orWhere('instansi', 'LIKE', "%{$search}%")
-                    ->orWhere('no_telp', 'LIKE', "%{$search}%")
-                    ->orWhere('email', 'LIKE', "%{$search}%")
-                    ->orWhere('alamat', 'LIKE', "%{$search}%")
-                    ->orWhere('tgl_kunjungan', 'LIKE', "%{$search}%")
-                    ->orWhere('waktu_masuk', 'LIKE', "%{$search}%")
-                    ->orWhere('waktu_keluar', 'LIKE', "%{$search}%")
-                    ->orWhere('status', 'LIKE', "%{$search}%")
-                    ->orWhere('keperluan', 'LIKE', "%{$search}%")
-                    ->orWhere('saran', 'LIKE', "%{$search}%");
-            });
-            
-        }
-
-        $ar_guest = $query->paginate(10);
+        $ar_guest = Guest::where('year_id', $activeYearId)
+                            ->orderBy('guests.id', 'desc')
+                            ->get();
 
         return view('guest.index', compact('notifications', 'ar_guest', 'years'));
     }

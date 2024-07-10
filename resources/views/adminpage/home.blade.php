@@ -60,7 +60,7 @@
 
                         <div class="col-lg-3 col-md-6 col-sm-6 col-12">
                             <div class="card card-statistic-1">
-                                <div class="bg-primary">
+                                <div class="bg-success">
                                     <div class="py-1"></div>
                                 </div>
                                 <div class="card-wrap">
@@ -77,7 +77,7 @@
 
                         <div class="col-lg-3 col-md-6 col-sm-6 col-12">
                             <div class="card card-statistic-1">
-                                <div class="bg-primary">
+                                <div class="bg-warning">
                                     <div class="py-1"></div>
                                 </div>
                                 <div class="card-wrap">
@@ -91,10 +91,27 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+                            <div class="card card-statistic-1">
+                                <div class="bg-danger">
+                                    <div class="py-1"></div>
+                                </div>
+                                <div class="card-wrap">
+                                    <div class="card-header">
+                                        <h4>Jumlah Petugas</h4>
+                                    </div>
+                                    <div class="card-body py-2">
+                                        <h5>{{ $totalOfficer }}</h5>
+                                    </div>
+                                    <div class="py-2"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="row justify-content-center">
-                        <div class="col-lg-10">
+                        <div class="col-lg-12">
                             <div class="card">
                                 <div class="card-header">
                                     <h4>Tamu Terbaru</h4>
@@ -115,8 +132,11 @@
                                                 <thead>
                                                     <tr>
                                                         <th>No</th>
-                                                        <th>Name</th>
                                                         <th>Tanggal</th>
+                                                        <th>Nama</th>
+                                                        <th>NIP</th>
+                                                        <th>Jabatan</th>
+                                                        <th>Keperluan</th>
                                                         <th>Status</th>
                                                         <th>Action</th>
                                                     </tr>
@@ -125,8 +145,11 @@
                                                     @foreach ($recentGuest as $index => $guest)
                                                         <tr>
                                                             <td>{{ $index + 1 }}</td>
+                                                            <td>{{ $guest->tgl_kunjungan->format('d F Y') }}</td>
                                                             <td>{{ $guest->nama }}</td>
-                                                            <td>{{ $guest->tgl_kunjungan }}</td>
+                                                            <td>{{ $guest->NIP }}</td>
+                                                            <td>{{ $guest->jabatan }}</td>
+                                                            <td>{{ $guest->keperluan }}</td>
                                                             <td>
                                                                 @if ($guest->status == 'done')
                                                                     <div class="badge badge-success">Selesai</div>

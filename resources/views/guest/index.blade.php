@@ -4,6 +4,9 @@
     @section('title_page', 'Data Tamu')
 
     @section('content')
+        @push('styles')
+            <link rel="stylesheet" href="{{ asset('adminpage/modules/datatables/datatables.min.css') }}">
+        @endpush
         <div class="main-content">
             <section class="section">
                 <div class="section-header d-flex justify-content-between">
@@ -49,86 +52,81 @@
                             <a href="{{ route('guest.create') }}" class="btn btn-primary mr-2">{{ __('+ Tambah Data') }}</a>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h4>Tabel Tamu</h4>
-                                    <div class="card-header-form">
-                                        <form action="{{ route('guest.index') }}" method="GET">
-                                            <div class="input-group">
-                                                <input type="text" name="search" class="form-control" placeholder="Search" value="{{ request('search') }}">
-                                                <div class="input-group-btn">
-                                                    <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i></button>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                                <div class="card-body p-0">
-                                    <div class="table-responsive">
-                                        <table class="table table-striped">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>{{ __('Tabel Tamu') }}</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped" id="datatables">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Tanggal</th>
+                                            <th>Nama</th>
+                                            <th>NIP</th>
+                                            <th>Jabatan</th>
+                                            <th>Tanda Tangan</th>
+                                            <th>Keperluan</th>
+                                            <th>Saran dan Harapan</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if ($ar_guest->isEmpty())
                                             <tr>
-                                                <th>No</th>
-                                                <th>Nama</th>
-                                                <th>Instansi</th>
-                                                <th>Keperluan</th>
-                                                <th>Tanggal</th>
-                                                <th>Status</th>
-                                                <th>Action</th>
+                                                <td colspan="7" class="text-center">Belum ada tamu pada periode ini</td>
                                             </tr>
-                                            @if ($ar_guest->isEmpty())
+                                        @else
+                                            @php
+                                                $no = 1;
+                                            @endphp
+                                            @foreach($ar_guest as $guest)
                                                 <tr>
-                                                    <td colspan="7" class="text-center">Belum ada tamu pada periode ini</td>
-                                                </tr>
-                                            @else
-                                                @foreach($ar_guest as $guest)
-                                                    <tr>
-                                                        <td class="p-0 text-center">{{ $loop->iteration + ($ar_guest->currentPage() - 1) * $ar_guest->perPage() }}</td>
-                                                        <td>{{ $guest->nama }}</td>
-                                                        <td>{{ $guest->instansi }}</td>
-                                                        <td>{{ $guest->keperluan }}</td>
-                                                        <td>{{ $guest->tgl_kunjungan }}</td>
-                                                        <td>
-                                                            @if ($guest->status == 'done')
-                                                                <div class="badge badge-success">Selesai</div>
-                                                            @else
-                                                                <div class="badge badge-warning">Berlangsung</div>
-                                                            @endif
-                                                        </td>
-                                                        <td>
-                                                            <div class="d-flex justify-content-start">
+                                                    <td>{{ $no++ }}</td>
+                                                    <td>{{ $guest->tgl_kunjungan->format('d M Y') }}</td>
+                                                    <td>{{ $guest->nama }}</td>
+                                                    <td>{{ $guest->NIP }}</td>
+                                                    <td>{{ $guest->jabatan }}</td>
+                                                    <td>
+                                                        <a target="_blank" href="{{ asset('storage/signatures/' . $guest->signature) }}">Lihat Disini</a>
+                                                    </td>
+                                                    <td>{{ $guest->keperluan }}</td>
+                                                    <td>{{ $guest->saran }}</td>
+                                                    <td>
+                                                        @if ($guest->status == 'done')
+                                                            <div class="badge badge-success">Selesai</div>
+                                                        @else
+                                                            <div class="badge badge-warning">Berlangsung</div>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-start">
+                                                            <div class="text-warning mx-2 cursor-pointer">
+                                                                <a class="btn btn-info btn-sm me-1" href="{{ route('guest.show', $guest->id) }}" title="Detail">
+                                                                    <i class="fa fa-eye"></i>
+                                                                </a>
+                                                            </div>
+                                                            @if (Auth::user()->role != 'Satpam')
                                                                 <div class="text-warning mx-2 cursor-pointer">
-                                                                    <a class="btn btn-info btn-sm me-1" href="{{ route('guest.show', $guest->id) }}" title="Detail">
-                                                                        <i class="fa fa-eye"></i>
+                                                                    <a class="btn btn-warning btn-sm me-1" href="{{ route('guest.edit', $guest->id) }}" title="Ubah">
+                                                                        <i class="fa fa-edit"></i>
                                                                     </a>
                                                                 </div>
-                                                                {{-- <a class="btn btn-warning btn-sm me-1" href="{{ route('guest.edit', $guest->id) }}" title="Ubah">
-                                                                    <i class="fa fa-edit"></i>
-                                                                </a> --}}
-                                                                @if (Auth::user()->role != 'Satpam')
-                                                                    <div class="text-danger mx-2 cursor-pointer">
-                                                                        <button class="btn btn-danger btn-sm delete-button" data-user-id="{{ $guest->id }}" title="Hapus">
-                                                                            <i class="fa fa-trash"></i>
-                                                                        </button>
-                                                                    </div>
-                                                                @endif
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-                                            @endif
-                                        </table>
-                                    </div>
-                                    <div class="d-flex justify-content-between align-items-center mx-3 mt-3 mb-3">
-                                        <div>
-                                            Menampilkan {{ $ar_guest->firstItem() }} sampai {{ $ar_guest->lastItem() }} dari {{ $ar_guest->total() }} entri
-                                        </div>
-                                        <div>
-                                            {{ $ar_guest->links('vendor.pagination.bootstrap-4') }}
-                                        </div>
-                                    </div>
-                                </div>
+                                                                <div class="text-danger mx-2 cursor-pointer">
+                                                                    <button class="btn btn-danger btn-sm delete-button" data-user-id="{{ $guest->id }}" title="Hapus">
+                                                                        <i class="fa fa-trash"></i>
+                                                                    </button>
+                                                                </div>
+                                                            @endif
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @endif
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -259,6 +257,13 @@
                         });
                     });
                 });
+            </script>
+
+            <script src="{{ asset('adminpage/modules/datatables/datatables.min.js') }}"></script>
+            <script src="{{ asset('adminpage/js/page/modules-datatables.js') }}"></script>
+
+            <script>
+                $('#datatables').dataTable();
             </script>
         @endpush        
 

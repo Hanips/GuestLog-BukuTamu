@@ -57,7 +57,7 @@
                                         <div class="col-md-6">
                                             <div class="mb-3">
                                                 <label for="tgl_kunjungan" class="form-label">Tanggal Kunjungan</label>
-                                                <input class="form-control" value="{{ $rs->tgl_kunjungan }}" id="tgl_kunjungan" type="date" disabled />
+                                                <input class="form-control" value="{{ $rs->tgl_kunjungan->format('Y-m-d') }}" id="tgl_kunjungan" type="date" disabled />
                                             </div>
                                             <div class="mb-3">
                                                 <label for="waktu_masuk" class="form-label">Waktu Masuk & Keluar</label>
@@ -93,13 +93,13 @@
                                                 <img src="{{ asset('storage/signatures/' . $rs->signature) }}" alt="Signature" style="border: 2px solid #000;">
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="card-footer text-right">
-                                        <a href="{{ url('/admin/guest') }}" class="btn btn-primary">Kembali</a>
-                                        @if (Auth::user()->role != 'Satpam')
-                                            <a class="btn btn-warning" href="{{ route('guest.edit', $rs->id) }}" title="Ubah">Ubah</a>
-                                            <button class="btn btn-danger delete-button" data-user-id="{{ $rs->id }}" title="Hapus">Hapus</button>
-                                        @endif
+                                        <div class="card-footer text-left">
+                                            <a href="{{ url('/admin/guest') }}" class="btn btn-primary">Kembali</a>
+                                            @if (Auth::user()->role != 'Satpam')
+                                                <a class="btn btn-warning" href="{{ route('guest.edit', $rs->id) }}" title="Ubah">Ubah</a>
+                                                <button class="btn btn-danger delete-button" data-user-id="{{ $rs->id }}" title="Hapus">Hapus</button>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
                             </div>

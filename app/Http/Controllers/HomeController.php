@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Year;
 use App\Models\Guest;
 use App\Models\Notification;
+use App\Models\User;
 use Carbon\Carbon;
 
 class HomeController extends Controller
@@ -33,7 +34,6 @@ class HomeController extends Controller
         $notifications = Notification::orderByRaw("CASE WHEN notification_status = 0 THEN 0 ELSE 1 END, updated_at DESC")->get();
 
         // Statistik jumlah tamu berdasarkan waktu
-        $totalGuests = Guest::count();
         $totalGuestsToday = Guest::whereDate("tgl_kunjungan", Carbon::today())
                                     ->where('year_id', $activeYearId)
                                     ->count();
@@ -41,6 +41,8 @@ class HomeController extends Controller
                                     ->where('year_id', $activeYearId)
                                     ->count();
         $totalGuestsPeriod = Guest::where('year_id', $activeYearId)->count();
+        $totalOfficer = User::where('role', 'Satpam')
+                                    ->count();
 
         // Daftar tamu terbaru
         $recentGuest = Guest::where('year_id', $activeYearId)
@@ -52,10 +54,10 @@ class HomeController extends Controller
         return view('adminpage.home', [
             'years' => $years,
             'notifications' => $notifications,
-            'totalGuests' => $totalGuests,
             'totalGuestsToday' => $totalGuestsToday,
             'totalGuestsMonth' => $totalGuestsMonth,
             'totalGuestsPeriod' => $totalGuestsPeriod,
+            'totalOfficer' => $totalOfficer,
             'recentGuest' => $recentGuest,
         ]);
     }

@@ -17,24 +17,10 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
-        $search = $request->input('search');
-
         $notifications = Notification::orderByRaw("CASE WHEN notification_status = 0 THEN 0 ELSE 1 END, updated_at DESC")->limit(10)->get();
-
-        $query = DB::table('users')
-                    ->select('users.*')
-                    ->orderBy('users.id', 'desc');
-
-        if ($search) {
-            $query->where(function($query) use ($search) {
-                $query->where('name', 'LIKE', "%{$search}%")
-                    ->orWhere('email', 'LIKE', "%{$search}%");
-            });
-        }
-
-        $ar_user = $query->paginate(10);
+        $ar_user = User::orderBy('users.id', 'desc')->get();
 
         return view('user.index', compact('notifications', 'ar_user'));
     }

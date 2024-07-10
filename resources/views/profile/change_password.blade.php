@@ -18,14 +18,14 @@
 
                 <div class="section-body">
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <div class="card">
                                 <form method="POST" action="{{ route('profile.updatePassword') }}" id="changePasswordForm">
                                     @csrf
                                     @method('PUT')
                                     <div class="card-body">
                                         <div class="row">
-                                            <div class="col-md-8">
+                                            <div class="col-md-12">
                                                 <div class="mb-3">
                                                     <label for="current_password" class="form-label">Password Saat Ini</label>
                                                     <input class="form-control @error('current_password') is-invalid @enderror" name="current_password" id="current_password" type="password" required />
@@ -54,11 +54,11 @@
                                                     @enderror
                                                 </div>
                                             </div>
+                                            <div class="card-footer text-left">
+                                                <button class="btn btn-primary" type="submit">Ubah Password</button>
+                                                <a href="{{ route('profile.edit') }}" class="btn btn-danger">Batal</a>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="card-footer text-right">
-                                        <button class="btn btn-primary" type="submit">Ubah Password</button>
-                                        <a href="{{ route('profile.edit') }}" class="btn btn-danger">Batal</a>
                                     </div>
                                 </form>
                             </div>
@@ -113,7 +113,6 @@
             </script>
         @endpush
     @endsection
-
 @else
     @include('adminpage.access_denied')
 @endif
